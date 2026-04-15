@@ -1,39 +1,35 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
 
 export function PowerChart({ data }: { data: { hour: string; usage: number }[] }) {
   return (
-    <div className="glass-panel p-4 glow-purple">
-      <h2 className="text-sm font-semibold text-accent mb-3 tracking-widest uppercase">24h Power Consumption</h2>
+    <div className="calm-card p-5">
+      <h2 className="text-[11px] font-medium text-muted-foreground mb-4 tracking-wide uppercase">24h Power Consumption</h2>
       <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-            <defs>
-              <linearGradient id="powerGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(185, 100%, 50%)" stopOpacity={0.4} />
-                <stop offset="100%" stopColor="hsl(270, 60%, 55%)" stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 18%)" />
-            <XAxis dataKey="hour" tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 10 }} interval={3} />
-            <YAxis tick={{ fill: "hsl(215, 20%, 55%)", fontSize: 10 }} />
+          <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(40, 10%, 88%)" />
+            <XAxis dataKey="hour" tick={{ fill: "hsl(200, 8%, 48%)", fontSize: 10 }} interval={3} axisLine={{ stroke: "hsl(40, 10%, 88%)" }} tickLine={false} />
+            <YAxis tick={{ fill: "hsl(200, 8%, 48%)", fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "hsl(230, 20%, 8%)",
-                border: "1px solid hsl(185, 100%, 50%, 0.3)",
-                borderRadius: "8px",
-                color: "hsl(210, 40%, 92%)",
+                backgroundColor: "hsl(40, 15%, 97%)",
+                border: "1px solid hsl(40, 10%, 88%)",
+                borderRadius: "6px",
+                color: "hsl(200, 10%, 20%)",
+                fontSize: 12,
               }}
-              labelStyle={{ color: "hsl(185, 100%, 50%)" }}
+              labelStyle={{ color: "hsl(200, 8%, 48%)" }}
               formatter={(value: number) => [`${value} MW`, "Usage"]}
             />
-            <Area
+            <Line
               type="monotone"
               dataKey="usage"
-              stroke="hsl(185, 100%, 50%)"
-              strokeWidth={2}
-              fill="url(#powerGrad)"
+              stroke="hsl(160, 30%, 32%)"
+              strokeWidth={1.5}
+              dot={false}
+              activeDot={{ r: 3, fill: "hsl(160, 30%, 32%)" }}
             />
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
