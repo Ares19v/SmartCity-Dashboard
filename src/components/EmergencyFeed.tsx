@@ -1,11 +1,21 @@
 import { useEffect, useRef } from "react";
-import { AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Droplets, Flame, Wind, AlertCircle, Wrench, Lightbulb } from "lucide-react";
 import type { EmergencyAlert } from "@/hooks/useLiveSimulation";
 
-const SEVERITY_CONFIG = {
-  critical: { icon: AlertTriangle, color: "text-destructive", border: "border-destructive/40", bg: "bg-destructive/10" },
-  warning: { icon: AlertCircle, color: "text-yellow-400", border: "border-yellow-500/40", bg: "bg-yellow-500/10" },
-  info: { icon: Info, color: "text-secondary", border: "border-secondary/40", bg: "bg-secondary/10" },
+const SEVERITY_TEXT: Record<string, string> = {
+  critical: "text-destructive",
+  warning: "text-warning",
+  info: "text-muted-foreground",
+};
+
+const ALERT_ICON: Record<string, React.ElementType> = {
+  "Water Main Leak": Droplets,
+  "Fire Alert": Flame,
+  "Gas Leak Reported": Wind,
+  "Flooding Risk": Droplets,
+  "Air Quality Warning": Wind,
+  "Power Surge Detected": Lightbulb,
+  "Street Light Outage": Lightbulb,
 };
 
 export function EmergencyFeed({ alerts }: { alerts: EmergencyAlert[] }) {
@@ -18,32 +28,28 @@ export function EmergencyFeed({ alerts }: { alerts: EmergencyAlert[] }) {
   }, [alerts]);
 
   return (
-    <div className="glass-panel glow-red flex flex-col h-full">
-      <div className="p-4 border-b border-white/10">
-        <h2 className="text-sm font-semibold text-destructive tracking-widest uppercase flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4" />
-          Emergency Feed
-        </h2>
+    <div className="calm-card flex flex-col h-full">
+      <div className="p-5 pb-3">
+        <h2 className="text-[11px] font-medium text-muted-foreground tracking-wide uppercase">Activity Log</h2>
       </div>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 pb-5 space-y-1">
         {alerts.map((alert) => {
-          const config = SEVERITY_CONFIG[alert.severity];
-          const Icon = config.icon;
+          const Icon = ALERT_ICON[alert.message] || AlertCircle;
           return (
             <div
               key={alert.id}
-              className={`p-2.5 rounded-md border ${config.border} ${config.bg} transition-all duration-300 animate-in slide-in-from-right-2`}
+              className="py-2 flex items-start gap-2.5 border-b border-border/50 last:border-0"
             >
-              <div className="flex items-start gap-2">
-                <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${config.color}`} />
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-foreground">
-                    Sector {alert.sector}: {alert.message}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {alert.timestamp.toLocaleTimeString()}
-                  </p>
-                </div>
+              <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${SEVERITY_TEXT[alert.severity]}`} strokeWidth={1.5} />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-foreground font-light leading-relaxed">
+                  <span className="text-muted-foreground">Sector {alert.sector}</span>
+                  {" · "}
+                  <span className={alert.severity === "critical" ? "font-medium" : ""}>{alert.message}</span>
+                </p>
+                <p className="text-[10px] text-muted-foreground/70 mt-0.5 font-light">
+                  {alert.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                </p>
               </div>
             </div>
           );

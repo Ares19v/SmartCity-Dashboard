@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react";
-import { TrafficCone, Zap, Siren } from "lucide-react";
+import { TrafficCone, Zap, Shield, Check } from "lucide-react";
 import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { CityMap } from "@/components/CityMap";
 import { PowerChart } from "@/components/PowerChart";
 import { EmergencyFeed } from "@/components/EmergencyFeed";
 
-function StatCard({ icon: Icon, label, value, unit, glowClass, iconColor }: {
-  icon: React.ElementType; label: string; value: number; unit: string; glowClass: string; iconColor: string;
+function StatCard({ icon: Icon, label, value, unit }: {
+  icon: React.ElementType; label: string; value: number; unit: string;
 }) {
   return (
-    <div className={`glass-panel p-4 ${glowClass} transition-all duration-500`}>
-      <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-lg bg-white/5 ${iconColor}`}>
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
-          <p className="text-2xl font-bold text-foreground tabular-nums">
+    <div className="calm-card p-5 transition-all duration-500">
+      <div className="flex items-center gap-4">
+        <Icon className="h-5 w-5 text-primary shrink-0" strokeWidth={1.5} />
+        <div className="flex-1">
+          <p className="text-[11px] text-muted-foreground font-medium tracking-wide uppercase">{label}</p>
+          <p className="text-2xl font-light text-foreground tabular-nums mt-0.5">
             {value.toLocaleString()}
-            <span className="text-sm font-normal text-muted-foreground ml-1">{unit}</span>
+            {unit && <span className="text-sm text-muted-foreground ml-1.5">{unit}</span>}
           </p>
         </div>
       </div>
@@ -33,8 +31,8 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <span className="text-primary font-mono tabular-nums">
-      {time.toLocaleTimeString()}
+    <span className="text-muted-foreground font-light tabular-nums text-sm">
+      {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
     </span>
   );
 }
@@ -43,26 +41,26 @@ export default function Index() {
   const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData } = useLiveSimulation();
 
   return (
-    <div className="min-h-screen bg-background p-4 flex flex-col gap-4">
+    <div className="min-h-screen bg-background p-5 md:p-6 flex flex-col gap-5">
       {/* Header */}
-      <header className="glass-panel px-6 py-3 flex items-center justify-between glow-cyan">
-        <div className="flex items-center gap-3">
-          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-          <h1 className="text-lg font-bold tracking-wider text-foreground uppercase">
-            Neo<span className="text-primary">City</span> Command
-          </h1>
-        </div>
-        <div className="flex items-center gap-4 text-sm">
-          <span className="text-muted-foreground">System Status: <span className="text-green-400 font-medium">ONLINE</span></span>
+      <header className="flex items-center justify-between">
+        <h1 className="text-base font-medium tracking-wide text-foreground">
+          NeoCity <span className="text-muted-foreground font-light">Command</span>
+        </h1>
+        <div className="flex items-center gap-5 text-sm">
+          <span className="flex items-center gap-1.5 text-primary text-xs font-medium">
+            <Check className="h-3.5 w-3.5" strokeWidth={2} />
+            Operational
+          </span>
           <LiveClock />
         </div>
       </header>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard icon={TrafficCone} label="Active Traffic Lights" value={trafficLights} unit="" glowClass="glow-cyan" iconColor="text-primary" />
-        <StatCard icon={Zap} label="Current Energy Load" value={energyLoad} unit="MW" glowClass="glow-purple" iconColor="text-accent" />
-        <StatCard icon={Siren} label="Emergency Units" value={emergencyUnits} unit="active" glowClass="glow-amber" iconColor="text-yellow-400" />
+        <StatCard icon={TrafficCone} label="Active Traffic Lights" value={trafficLights} unit="" />
+        <StatCard icon={Zap} label="Current Energy Load" value={energyLoad} unit="MW" />
+        <StatCard icon={Shield} label="Emergency Units" value={emergencyUnits} unit="active" />
       </div>
 
       {/* Main Content */}
