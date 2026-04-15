@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TrafficCone, Zap, Shield, Check } from "lucide-react";
+import { TrafficCone, Zap, Shield, Check, Search } from "lucide-react";
 import { useLiveSimulation } from "@/hooks/useLiveSimulation";
 import { CityMap } from "@/components/CityMap";
 import { PowerChart } from "@/components/PowerChart";
@@ -39,6 +39,14 @@ function LiveClock() {
 
 export default function Index() {
   const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData } = useLiveSimulation();
+  const [logFilter, setLogFilter] = useState("");
+
+  const filteredAlerts = logFilter
+    ? alerts.filter(a =>
+        a.message.toLowerCase().includes(logFilter.toLowerCase()) ||
+        `sector ${a.sector}`.toLowerCase().includes(logFilter.toLowerCase())
+      )
+    : alerts;
 
   return (
     <div className="min-h-screen bg-background p-5 md:p-6 flex flex-col gap-5">
@@ -47,7 +55,17 @@ export default function Index() {
         <h1 className="text-base font-medium tracking-wide text-foreground">
           NeoCity <span className="text-muted-foreground font-light">Command</span>
         </h1>
-        <div className="flex items-center gap-5 text-sm">
+        <div className="flex items-center gap-4 text-sm">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" strokeWidth={1.5} />
+            <input
+              type="text"
+              placeholder="Filter activity log…"
+              value={logFilter}
+              onChange={(e) => setLogFilter(e.target.value)}
+              className="h-7 w-44 rounded-md bg-muted/60 border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 font-light focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+            />
+          </div>
           <span className="flex items-center gap-1.5 text-primary text-xs font-medium">
             <Check className="h-3.5 w-3.5" strokeWidth={2} />
             Operational
@@ -66,7 +84,7 @@ export default function Index() {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0">
         <div className="lg:col-span-3 min-h-[400px]">
-          <EmergencyFeed alerts={alerts} />
+          <EmergencyFeed alerts={filteredAlerts} />
         </div>
         <div className="lg:col-span-5 flex flex-col gap-4">
           <CityMap sectors={sectors} />
