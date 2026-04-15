@@ -35,6 +35,7 @@ export function EmergencyFeed({ alerts }: { alerts: EmergencyAlert[] }) {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 pb-5 space-y-1">
         {alerts.map((alert) => {
           const Icon = ALERT_ICON[alert.message] || AlertCircle;
+          const isGasLeak = alert.message === "Gas Leak Reported";
           return (
             <div
               key={alert.id}
@@ -42,10 +43,13 @@ export function EmergencyFeed({ alerts }: { alerts: EmergencyAlert[] }) {
             >
               <Icon className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${SEVERITY_TEXT[alert.severity]}`} strokeWidth={1.5} />
               <div className="min-w-0 flex-1">
-                <p className="text-xs text-foreground font-light leading-relaxed">
+                <p className="text-xs text-foreground font-light leading-relaxed flex items-center gap-1.5">
                   <span className="text-muted-foreground">Sector {alert.sector}</span>
                   {" · "}
                   <span className={alert.severity === "critical" ? "font-medium" : ""}>{alert.message}</span>
+                  {isGasLeak && (
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-warning animate-pulse shrink-0" />
+                  )}
                 </p>
                 <p className="text-[10px] text-muted-foreground/70 mt-0.5 font-light">
                   {alert.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
