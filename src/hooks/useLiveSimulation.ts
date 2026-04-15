@@ -75,9 +75,9 @@ export function useLiveSimulation(): SimulationData {
   const alertCounter = useRef(0);
 
   const tick = useCallback(() => {
-    setTrafficLights(v => Math.max(1100, Math.min(1400, v + Math.floor(Math.random() * 40 - 20))));
-    setEnergyLoad(v => Math.max(350, Math.min(620, v + Math.floor(Math.random() * 30 - 15))));
-    setEmergencyUnits(v => Math.max(12, Math.min(38, v + Math.floor(Math.random() * 6 - 3))));
+    setTrafficLights(v => Math.max(1100, Math.min(1400, v + Math.floor(Math.random() * 11 - 5))));
+    setEnergyLoad(v => Math.max(350, Math.min(620, v + Math.floor(Math.random() * 21 - 10))));
+    setEmergencyUnits(v => Math.max(12, Math.min(38, v + Math.floor(Math.random() * 4 - 2))));
 
     setSectors(prev => prev.map(s => ({
       ...s,
