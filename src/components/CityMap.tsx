@@ -1,7 +1,8 @@
-import { Feather, Building, TreePine, Heart, Home, Cpu, Waves, GraduationCap, ShoppingBag, TrainFront, Zap, Landmark } from "lucide-react";
+import { Feather, Building, TreePine, Heart, Home, Cpu, Waves, GraduationCap, ShoppingBag, TrainFront, Zap, Landmark, SlidersHorizontal } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { SectorStatus } from "@/hooks/useLiveSimulation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Building2: Building, Factory: Cpu, Trees: Feather, Hospital: Heart,
@@ -155,11 +156,44 @@ export function CityMap({ sectors }: { sectors: SectorStatus[] }) {
     return map;
   }, [sectors]);
 
+  const [sectorFilter, setSectorFilter] = useState<"all" | "infrastructure" | "service">("all");
+
+  const INFRASTRUCTURE = ["Downtown Core", "Industrial Zone", "Power Grid", "Transit Hub", "Harbor Front"];
+  const SERVICE = ["Green Park", "Medical District", "University", "Commercial East", "Civic Center", "Residential North", "Tech Hub"];
+
+  const filteredSectors = useMemo(() => {
+    if (sectorFilter === "infrastructure") return sectors.filter(s => INFRASTRUCTURE.includes(s.name));
+    if (sectorFilter === "service") return sectors.filter(s => SERVICE.includes(s.name));
+    return sectors;
+  }, [sectors, sectorFilter]);
+
   return (
     <div className="calm-card p-5">
-      <h2 className="text-[11px] font-medium text-muted-foreground mb-4 tracking-wide uppercase">City Sectors</h2>
-      <div className="grid grid-cols-4 grid-rows-3 gap-3">
-        {sectors.map((sector) => {
+      <div className="flex items-center gap-2 mb-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-1 rounded hover:bg-muted/60 transition-colors">
+              <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.5} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-card border-border w-44 p-2" align="start">
+            {(["all", "infrastructure", "service"] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setSectorFilter(opt)}
+                className={`w-full text-left px-2.5 py-1.5 rounded text-xs font-light transition-colors ${
+                  sectorFilter === opt ? "bg-muted text-foreground font-medium" : "text-muted-foreground hover:bg-muted/50"
+                }`}
+              >
+                {opt === "all" ? "All Sectors" : opt === "infrastructure" ? "Infrastructure Status" : "Service Level"}
+              </button>
+            ))}
+          </PopoverContent>
+        </Popover>
+        <h2 className="text-[11px] font-medium text-muted-foreground tracking-wide uppercase">City Sectors</h2>
+      </div>
+      <div className="grid grid-cols-4 gap-3">
+        {filteredSectors.map((sector) => {
           const Icon = ICON_MAP[sector.icon] || Building;
           const metrics = sectorMetrics[sector.name] || [];
           return (
