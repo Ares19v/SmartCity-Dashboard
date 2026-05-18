@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { TrafficCone, Zap, Shield, Check, Search } from "lucide-react";
-import { useLiveSimulation } from "@/hooks/useLiveSimulation";
+import { useLiveSimulation, type SectorStatus } from "@/hooks/useLiveSimulation";
 import { CityMap } from "@/components/CityMap";
+import { SectorMap } from "@/components/SectorMap";
 import { PowerChart } from "@/components/PowerChart";
 import { EmergencyFeed } from "@/components/EmergencyFeed";
 
@@ -40,6 +41,9 @@ function LiveClock() {
 export default function Index() {
   const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData, lastSync } = useLiveSimulation();
   const [logFilter, setLogFilter] = useState("");
+  const [focusedSectorId, setFocusedSectorId] = useState<number | null>(null);
+
+  const handleSectorSelect = (sector: SectorStatus) => setFocusedSectorId(sector.id);
 
   const filteredAlerts = logFilter
     ? alerts.filter(a =>
@@ -49,7 +53,7 @@ export default function Index() {
     : alerts;
 
   return (
-    <div className="h-screen bg-background p-4 md:p-6 flex flex-col gap-4 md:gap-5 overflow-hidden">
+    <div className="min-h-screen bg-background p-4 md:p-6 flex flex-col gap-4 md:gap-5">
       {/* Header */}
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-sm md:text-base font-medium tracking-wide text-foreground">
@@ -83,11 +87,12 @@ export default function Index() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 md:gap-4 flex-1 min-h-0">
-        <div className="md:col-span-1 lg:col-span-3 min-h-[300px] md:min-h-0 h-full overflow-hidden">
+        <div className="md:col-span-1 lg:col-span-3 min-h-[300px] lg:max-h-[calc(100vh-220px)] h-full overflow-hidden">
           <EmergencyFeed alerts={filteredAlerts} />
         </div>
         <div className="md:col-span-1 lg:col-span-5 flex flex-col gap-3 md:gap-4">
-          <CityMap sectors={sectors} />
+          <CityMap sectors={sectors} onSectorSelect={handleSectorSelect} />
+          <SectorMap sectors={sectors} selectedId={focusedSectorId} onSelect={handleSectorSelect} />
         </div>
         <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-3 md:gap-4">
           <PowerChart data={powerData} />

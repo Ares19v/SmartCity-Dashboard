@@ -87,7 +87,7 @@ const SECTOR_TOOLTIP_METRICS: Record<string, string[]> = {
 const INFRASTRUCTURE = ["Downtown Core", "Industrial Zone", "Power Grid", "Transit Hub", "Harbor Front"];
 const SERVICE = ["Green Park", "Medical District", "University", "Commercial East", "Civic Center", "Residential North", "Tech Hub"];
 
-export function CityMap({ sectors }: { sectors: SectorStatus[] }) {
+export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; onSectorSelect?: (sector: SectorStatus) => void }) {
   const [sectorFilter, setSectorFilter] = useState<"all" | "infrastructure" | "service">("all");
   const [selectedSector, setSelectedSector] = useState<SectorStatus | null>(null);
   const [health, setHealth] = useState<SectorHealth | null>(null);
@@ -112,6 +112,7 @@ export function CityMap({ sectors }: { sectors: SectorStatus[] }) {
     setSelectedSector(sector);
     setHealth(generateHealth());
     setResetFlash(false);
+    onSectorSelect?.(sector);
   };
 
   const handleReset = () => {
