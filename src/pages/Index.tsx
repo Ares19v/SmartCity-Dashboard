@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { TrafficCone, Zap, Shield, Check, Search } from "lucide-react";
-import { useLiveSimulation } from "@/hooks/useLiveSimulation";
+import { useLiveSimulation, type SectorStatus } from "@/hooks/useLiveSimulation";
 import { CityMap } from "@/components/CityMap";
+import { SectorMap } from "@/components/SectorMap";
 import { PowerChart } from "@/components/PowerChart";
 import { EmergencyFeed } from "@/components/EmergencyFeed";
 
