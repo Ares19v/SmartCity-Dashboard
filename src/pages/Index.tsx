@@ -92,10 +92,10 @@ export default function Index() {
         </div>
         <div className="md:col-span-1 lg:col-span-5 flex flex-col gap-3 md:gap-4">
           <CityMap sectors={sectors} onSectorSelect={handleSectorSelect} />
-          <SectorMap sectors={sectors} selectedId={focusedSectorId} onSelect={handleSectorSelect} />
+          <PowerChart data={powerData} />
         </div>
         <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-3 md:gap-4">
-          <PowerChart data={powerData} />
+          <SectorMap sectors={sectors} selectedId={focusedSectorId} onSelect={handleSectorSelect} />
         </div>
       </div>
 
