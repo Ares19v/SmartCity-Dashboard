@@ -41,6 +41,9 @@ function LiveClock() {
 export default function Index() {
   const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData, lastSync } = useLiveSimulation();
   const [logFilter, setLogFilter] = useState("");
+  const [focusedSectorId, setFocusedSectorId] = useState<number | null>(null);
+
+  const handleSectorSelect = (sector: SectorStatus) => setFocusedSectorId(sector.id);
 
   const filteredAlerts = logFilter
     ? alerts.filter(a =>
