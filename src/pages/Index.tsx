@@ -49,7 +49,7 @@ export default function Index() {
     : alerts;
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 flex flex-col gap-4 md:gap-5">
+    <div className="h-screen bg-background p-4 md:p-6 flex flex-col gap-4 md:gap-5 overflow-hidden">
       {/* Header */}
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-sm md:text-base font-medium tracking-wide text-foreground">
