@@ -99,3 +99,8 @@ SmartCity-Dashboard/
 ## Built By
 
 [Ares19v](https://github.com/Ares19v)
+
+---
+<p align="center">
+  Made by Devansh Tyagi @ 2026
+</p>
