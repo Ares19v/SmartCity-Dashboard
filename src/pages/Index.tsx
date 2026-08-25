@@ -6,6 +6,34 @@ import { SectorMap } from "@/components/SectorMap";
 import { PowerChart } from "@/components/PowerChart";
 import { EmergencyFeed } from "@/components/EmergencyFeed";
 
+interface StatCardProps {
+  icon: React.ElementType;
+  label: string;
+  value: number;
+  unit: string;
+  subtext: string;
+  progress: number;
+  accent: "sky" | "emerald" | "indigo";
+}
+
+const ACCENT_STYLES = {
+  sky: {
+    iconBg: "bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400",
+    badge: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",
+    bar: "bg-sky-500",
+  },
+  emerald: {
+    iconBg: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400",
+    badge: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
+    bar: "bg-emerald-500",
+  },
+  indigo: {
+    iconBg: "bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400",
+    badge: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20",
+    bar: "bg-indigo-500",
+  },
+};
+
 function StatCard({
   icon: Icon,
   label,
@@ -13,21 +41,17 @@ function StatCard({
   unit,
   subtext,
   progress,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: number;
-  unit: string;
-  subtext: string;
-  progress: number;
-}) {
+  accent,
+}: StatCardProps) {
+  const styles = ACCENT_STYLES[accent];
+
   return (
-    <div className="calm-card p-4 md:p-5 transition-all duration-300 group">
+    <div className="calm-card p-4 md:p-5 transition-all duration-300 group hover:border-border">
       <div className="flex items-start justify-between gap-3 mb-2">
-        <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary shrink-0 transition-transform group-hover:scale-105">
+        <div className={`p-2 rounded-lg border shrink-0 transition-transform group-hover:scale-105 ${styles.iconBg}`}>
           <Icon className="h-4 w-4 md:h-4.5 md:w-4.5" strokeWidth={1.75} />
         </div>
-        <span className="text-[10px] text-primary/90 font-medium px-2 py-0.5 rounded-full bg-primary/10 tabular-nums">
+        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border tabular-nums ${styles.badge}`}>
           {subtext}
         </span>
       </div>
@@ -43,9 +67,9 @@ function StatCard({
       </div>
 
       {/* Progress Bar Indicator */}
-      <div className="w-full bg-muted/60 h-1 rounded-full mt-3 overflow-hidden">
+      <div className="w-full bg-muted/60 h-1.5 rounded-full mt-3 overflow-hidden">
         <div
-          className="bg-primary h-full rounded-full transition-all duration-700"
+          className={`h-full rounded-full transition-all duration-700 ${styles.bar}`}
           style={{ width: `${Math.min(100, Math.max(10, progress))}%` }}
         />
       </div>
@@ -60,8 +84,8 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <span className="text-muted-foreground font-light tabular-nums text-xs md:text-sm flex items-center gap-1.5 bg-muted/40 px-2.5 py-1 rounded-md border border-border/40">
-      <Radio className="h-3 w-3 text-primary animate-pulse" />
+    <span className="text-muted-foreground font-light tabular-nums text-xs md:text-sm flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md border border-border/50">
+      <Radio className="h-3 w-3 text-emerald-500 animate-pulse" />
       {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
     </span>
   );
@@ -83,17 +107,17 @@ export default function Index() {
     : alerts;
 
   return (
-    <div className="min-h-screen bg-background p-3 md:p-6 flex flex-col gap-3 md:gap-5 max-w-[1700px] mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-sky-50/30 p-3 md:p-6 flex flex-col gap-3 md:gap-5 max-w-[1700px] mx-auto">
       {/* Header */}
       <header className="calm-card px-4 py-3 md:px-5 md:py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center text-white shadow-sm shadow-emerald-500/20">
             <Activity className="h-4 w-4" strokeWidth={2} />
           </div>
           <div>
             <h1 className="text-sm md:text-base font-medium tracking-tight text-foreground flex items-center gap-2">
               NeoCity <span className="text-muted-foreground font-light">Command Center</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping inline-block" />
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
             </h1>
             <p className="text-[10px] text-muted-foreground font-light hidden sm:block">
               Integrated Urban Analytics & IoT Sensor Grid
@@ -109,11 +133,11 @@ export default function Index() {
               placeholder="Search activity log… (/)"
               value={logFilter}
               onChange={(e) => setLogFilter(e.target.value)}
-              className="h-8 w-full sm:w-48 md:w-56 rounded-lg bg-muted/50 border border-border/50 pl-7 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-all"
+              className="h-8 w-full sm:w-48 md:w-56 rounded-lg bg-muted/40 border border-border/60 pl-7 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-all"
             />
           </div>
-          <span className="hidden md:flex items-center gap-1.5 text-primary text-xs font-medium bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-md">
-            <Check className="h-3 w-3" strokeWidth={2.5} />
+          <span className="hidden md:flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+            <Check className="h-3 w-3 text-emerald-600" strokeWidth={2.5} />
             All Systems Nominal
           </span>
           <LiveClock />
@@ -129,6 +153,7 @@ export default function Index() {
           unit="nodes"
           subtext="98.2% Sync"
           progress={(trafficLights / 1400) * 100}
+          accent="sky"
         />
         <StatCard
           icon={Zap}
@@ -137,6 +162,7 @@ export default function Index() {
           unit="MW"
           subtext="Normal Range"
           progress={(energyLoad / 600) * 100}
+          accent="emerald"
         />
         <StatCard
           icon={Shield}
@@ -145,6 +171,7 @@ export default function Index() {
           unit="units"
           subtext="Ready / Standby"
           progress={(emergencyUnits / 40) * 100}
+          accent="indigo"
         />
       </div>
 

@@ -2,21 +2,24 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { Droplets, Flame, Wind, AlertCircle, Lightbulb, Bell, AlertTriangle, ShieldCheck } from "lucide-react";
 import type { EmergencyAlert } from "@/hooks/useLiveSimulation";
 
-const SEVERITY_STYLE: Record<string, { badge: string; text: string; bg: string }> = {
+const SEVERITY_STYLE: Record<string, { badge: string; text: string; bg: string; iconColor: string }> = {
   critical: {
-    badge: "bg-destructive/10 text-destructive border-destructive/20",
-    text: "text-destructive",
-    bg: "hover:bg-destructive/5",
+    badge: "bg-rose-500/10 text-rose-600 border-rose-500/30",
+    text: "text-rose-700 dark:text-rose-400",
+    bg: "bg-rose-500/[0.04] border-rose-500/25 hover:bg-rose-500/[0.08]",
+    iconColor: "text-rose-600",
   },
   warning: {
-    badge: "bg-warning/10 text-warning border-warning/20",
-    text: "text-warning",
-    bg: "hover:bg-warning/5",
+    badge: "bg-amber-500/10 text-amber-600 border-amber-500/30",
+    text: "text-amber-700 dark:text-amber-400",
+    bg: "bg-amber-500/[0.04] border-amber-500/25 hover:bg-amber-500/[0.08]",
+    iconColor: "text-amber-600",
   },
   info: {
-    badge: "bg-muted text-muted-foreground border-border/50",
-    text: "text-muted-foreground",
-    bg: "hover:bg-muted/40",
+    badge: "bg-sky-500/10 text-sky-600 border-sky-500/25",
+    text: "text-slate-700 dark:text-slate-300",
+    bg: "bg-sky-500/[0.02] border-sky-500/15 hover:bg-sky-500/[0.06]",
+    iconColor: "text-sky-600",
   },
 };
 

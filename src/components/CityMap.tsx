@@ -155,16 +155,29 @@ export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; 
           {filteredSectors.map((sector) => {
             const Icon = ICON_MAP[sector.icon] || Building;
             const metrics = tooltipData[sector.name] || [];
+
+            // Domain-specific subtle color styling
+            const iconColor =
+              sector.name.includes("Park") || sector.name.includes("Medical")
+                ? "text-emerald-600 group-hover:text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+                : sector.name.includes("Tech") || sector.name.includes("Power")
+                ? "text-sky-600 group-hover:text-sky-500 bg-sky-500/10 border-sky-500/20"
+                : sector.name.includes("Transit") || sector.name.includes("Harbor")
+                ? "text-indigo-600 group-hover:text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+                : sector.name.includes("Commercial") || sector.name.includes("Civic")
+                ? "text-amber-600 group-hover:text-amber-500 bg-amber-500/10 border-amber-500/20"
+                : "text-teal-600 group-hover:text-teal-500 bg-teal-500/10 border-teal-500/20";
+
             return (
               <Tooltip key={sector.id} delayDuration={200}>
                 <TooltipTrigger asChild>
                   <div
                     onClick={() => handleSectorClick(sector)}
-                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-lg border border-border/40 bg-muted/20 hover:bg-muted/60 hover:border-border transition-all cursor-pointer group"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-lg border border-border/40 bg-card hover:bg-muted/50 hover:border-border transition-all cursor-pointer group shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
                   >
                     <div className="relative">
-                      <div className="p-1.5 rounded-md bg-card border border-border/50 group-hover:border-primary/40 transition-all">
-                        <Icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" strokeWidth={1.5} />
+                      <div className={`p-1.5 rounded-md border transition-all ${iconColor}`}>
+                        <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />
                       </div>
                       <div className={`absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ${STATUS_DOT[sector.status]} ring-2 ring-card`} />
                     </div>

@@ -21,9 +21,9 @@ const SECTOR_COORDS: Record<string, [number, number]> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  normal: "hsl(var(--primary))",
-  warning: "hsl(var(--warning))",
-  critical: "hsl(var(--destructive))",
+  normal: "#10b981",
+  warning: "#f59e0b",
+  critical: "#f43f5e",
 };
 
 function FlyTo({ target, resetCenter }: { target: [number, number] | null; resetCenter: number }) {

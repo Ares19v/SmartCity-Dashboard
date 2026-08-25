@@ -23,9 +23,9 @@ export function PowerChart({ data }: { data: { hour: string; usage: number }[] }
           </h2>
         </div>
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-light tabular-nums">
-          <span>Peak: <strong className="text-foreground font-medium">{peak} MW</strong></span>
-          <span className="hidden sm:inline">Min: <strong className="text-foreground font-medium">{min} MW</strong></span>
-          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+          <span>Peak: <strong className="text-emerald-700 dark:text-emerald-400 font-medium">{peak} MW</strong></span>
+          <span className="hidden sm:inline">Min: <strong className="text-sky-700 dark:text-sky-400 font-medium">{min} MW</strong></span>
+          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-medium">
             Live: {current} MW
           </span>
         </div>
@@ -36,8 +36,9 @@ export function PowerChart({ data }: { data: { hour: string; usage: number }[] }
           <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="powerGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#0d9488" stopOpacity={0.35} />
+                <stop offset="60%" stopColor="#0284c7" stopOpacity={0.12} />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity={0.0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.7)" vertical={false} />
