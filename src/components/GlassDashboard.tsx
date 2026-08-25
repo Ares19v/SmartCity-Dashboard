@@ -386,9 +386,15 @@ export function GlassDashboard({
               {/* 3D Visual Rendering Container */}
               <div className="relative w-full flex-1 rounded-[24px] overflow-hidden bg-gradient-to-b from-[#edf2f7] to-[#e2e8f0] flex items-center justify-center min-h-[380px]">
                 <img
-                  src="/glass_hero.png"
-                  alt="3D Smart Infrastructure Hero"
-                  className="w-full h-full object-cover rounded-[24px] transform group-hover:scale-102 transition-transform duration-700"
+                  src={
+                    selectedSector.name.includes("Park")
+                      ? "/greenhouse_biodome.png"
+                      : selectedSector.name.includes("Industrial") || selectedSector.name.includes("Harbor")
+                      ? "/eco_architecture.png"
+                      : "/modern_greenhouse.png"
+                  }
+                  alt="Smart Infrastructure Hero"
+                  className="w-full h-full object-cover rounded-[24px] transform group-hover:scale-105 transition-transform duration-700"
                 />
 
                 {/* Bottom Glass Overlay Card */}
