@@ -84,10 +84,21 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <span className="text-muted-foreground font-light tabular-nums text-xs md:text-sm flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-md border border-border/50">
-      <Radio className="h-3 w-3 text-emerald-500 animate-pulse" />
-      {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-    </span>
+    <div className="flex items-center gap-2 bg-card/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-border/60 shadow-sm">
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span className="text-[9px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-medium">
+          LIVE
+        </span>
+      </div>
+      <div className="h-3 w-[1px] bg-border/80" />
+      <span className="text-foreground font-mono font-medium tabular-nums text-xs md:text-sm">
+        {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </span>
+    </div>
   );
 }
 
@@ -108,38 +119,92 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-sky-50/30 p-3 md:p-6 flex flex-col gap-3 md:gap-5 max-w-[1700px] mx-auto">
-      {/* Header */}
-      <header className="calm-card px-4 py-3 md:px-5 md:py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      {/* High-Tech Command Header */}
+      <header className="calm-card p-3 md:px-5 md:py-3.5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 border border-border/80 bg-card/90 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+        {/* Ambient Top Glow Accent Line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-teal-500 via-sky-500 to-indigo-500 opacity-80" />
+
+        {/* Left: Brand Identity & Sub-badge */}
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center text-white shadow-sm shadow-emerald-500/20">
-            <Activity className="h-4 w-4" strokeWidth={2} />
+          <div className="relative">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-teal-600 via-emerald-500 to-sky-500 flex items-center justify-center text-white shadow-md shadow-teal-500/25 ring-2 ring-white/60">
+              <Activity className="h-5 w-5" strokeWidth={2.2} />
+            </div>
+            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white ring-1 ring-emerald-400/50 animate-pulse" />
           </div>
+
           <div>
-            <h1 className="text-sm md:text-base font-medium tracking-tight text-foreground flex items-center gap-2">
-              NeoCity <span className="text-muted-foreground font-light">Command Center</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
-            </h1>
-            <p className="text-[10px] text-muted-foreground font-light hidden sm:block">
-              Integrated Urban Analytics & IoT Sensor Grid
+            <div className="flex items-center gap-2">
+              <h1 className="text-base md:text-lg font-bold tracking-tight text-foreground flex items-center gap-1.5">
+                NEOCITY
+                <span className="text-xs md:text-sm font-normal text-sky-600 dark:text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+                  COMMAND OS
+                </span>
+              </h1>
+              <span className="text-[10px] text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded">
+                v2.4
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground/80 font-light flex items-center gap-1.5 mt-0.5">
+              <span>Autonomous IoT Sensor Grid</span>
+              <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
+              <span className="text-emerald-600 font-medium">12/12 Nodes Online</span>
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 md:gap-3 text-sm flex-wrap w-full sm:w-auto justify-between sm:justify-end">
-          <div className="relative flex-1 sm:flex-initial">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground/60" strokeWidth={1.5} />
+        {/* Center: Live Telemetry Micro-HUD */}
+        <div className="hidden xl:flex items-center gap-2.5 bg-muted/30 p-1 rounded-xl border border-border/50">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-card border border-border/40 text-xs shadow-sm">
+            <Zap className="h-3.5 w-3.5 text-emerald-500" strokeWidth={1.75} />
+            <span className="text-muted-foreground font-light">Grid Load:</span>
+            <strong className="text-foreground font-medium tabular-nums">{energyLoad} MW</strong>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-card border border-border/40 text-xs shadow-sm">
+            <Radio className="h-3.5 w-3.5 text-sky-500" strokeWidth={1.75} />
+            <span className="text-muted-foreground font-light">Mesh Latency:</span>
+            <strong className="text-foreground font-medium tabular-nums">4.2 ms</strong>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-card border border-border/40 text-xs shadow-sm">
+            <Shield className="h-3.5 w-3.5 text-indigo-500" strokeWidth={1.75} />
+            <span className="text-muted-foreground font-light">Fleet Standby:</span>
+            <strong className="text-foreground font-medium tabular-nums">{emergencyUnits} Units</strong>
+          </div>
+        </div>
+
+        {/* Right: Search, Status, and Clock */}
+        <div className="flex items-center gap-2.5 md:gap-3 text-sm flex-wrap w-full lg:w-auto justify-between lg:justify-end">
+          {/* Interactive Search */}
+          <div className="relative flex-1 sm:flex-initial min-w-[200px]">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" strokeWidth={1.75} />
             <input
               type="text"
-              placeholder="Search activity log… (/)"
+              placeholder="Filter activity log…"
               value={logFilter}
               onChange={(e) => setLogFilter(e.target.value)}
-              className="h-8 w-full sm:w-48 md:w-56 rounded-lg bg-muted/40 border border-border/60 pl-7 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-all"
+              className="h-8.5 w-full sm:w-52 md:w-60 rounded-lg bg-muted/40 border border-border/70 pl-8 pr-12 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500/50 transition-all shadow-inner"
             />
+            {logFilter ? (
+              <button
+                onClick={() => setLogFilter("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-0.5"
+              >
+                ✕
+              </button>
+            ) : (
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-muted-foreground/60 font-mono bg-card px-1.5 py-0.5 rounded border border-border/50">
+                /
+              </span>
+            )}
           </div>
-          <span className="hidden md:flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-            <Check className="h-3 w-3 text-emerald-600" strokeWidth={2.5} />
-            All Systems Nominal
-          </span>
+
+          {/* Operational Status Pill */}
+          <div className="hidden sm:flex items-center gap-2 text-xs font-medium bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-lg shadow-sm">
+            <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
+            <span>All Systems Nominal</span>
+          </div>
+
+          {/* Live Telemetry Clock */}
           <LiveClock />
         </div>
       </header>
