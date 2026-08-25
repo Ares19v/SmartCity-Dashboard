@@ -360,41 +360,56 @@ export function GlassDashboard({
           {/* CENTER COLUMN: 3D Greenhouse / Solar Infrastructure Hero */}
           <div className="lg:col-span-5 flex flex-col">
             <div className="bg-white rounded-[32px] p-4 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] h-full flex flex-col relative overflow-hidden group">
-              {/* Sector Quick Picker */}
+              {/* Sector Quick Picker for all 5 sectors */}
               <div className="flex items-center justify-between mb-3 px-2 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                   <span className="text-xs font-semibold text-slate-800">{selectedSector.name}</span>
                 </div>
                 <div className="flex items-center gap-1 flex-wrap">
-                  {sectors.slice(0, 5).map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => onSectorSelect(s)}
-                      className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${
-                        s.id === selectedSector.id
-                          ? "bg-black text-white shadow-sm"
-                          : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                      }`}
-                    >
-                      {s.name.split(" ")[0]}
-                    </button>
-                  ))}
+                  {[
+                    { id: 1, name: "Downtown Core", label: "Downtown", img: "/sector_downtown.png" },
+                    { id: 2, name: "Industrial Zone", label: "Industrial", img: "/sector_industrial.png" },
+                    { id: 3, name: "Green Park", label: "Green", img: "/sector_green.png" },
+                    { id: 4, name: "Medical District", label: "Medical", img: "/sector_medical.png" },
+                    { id: 5, name: "Residential North", label: "Residential", img: "/sector_residential.png" },
+                  ].map((s) => {
+                    const isSelected = selectedSector.name.startsWith(s.label) || selectedSector.name === s.name;
+                    const matchedSector = sectors.find((sec) => sec.name === s.name) || sectors[0];
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => onSectorSelect(matchedSector)}
+                        className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all duration-200 ${
+                          isSelected
+                            ? "bg-black text-white shadow-sm scale-105"
+                            : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-black"
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 3D Visual Rendering Container */}
+              {/* 3D Visual Rendering Container with Dynamic Image Switching for all 5 sectors */}
               <div className="relative w-full flex-1 rounded-[24px] overflow-hidden bg-gradient-to-b from-[#edf2f7] to-[#e2e8f0] flex items-center justify-center min-h-[380px]">
                 <img
+                  key={selectedSector.name}
                   src={
-                    selectedSector.name.includes("Park")
-                      ? "/greenhouse_biodome.png"
-                      : selectedSector.name.includes("Industrial") || selectedSector.name.includes("Harbor")
-                      ? "/eco_architecture.png"
-                      : "/modern_greenhouse.png"
+                    selectedSector.name.includes("Industrial")
+                      ? "/sector_industrial.png"
+                      : selectedSector.name.includes("Green") || selectedSector.name.includes("Park")
+                      ? "/sector_green.png"
+                      : selectedSector.name.includes("Medical")
+                      ? "/sector_medical.png"
+                      : selectedSector.name.includes("Residential")
+                      ? "/sector_residential.png"
+                      : "/sector_downtown.png"
                   }
-                  alt="Smart Infrastructure Hero"
-                  className="w-full h-full object-cover rounded-[24px] transform group-hover:scale-105 transition-transform duration-700"
+                  alt={selectedSector.name}
+                  className="w-full h-full object-cover rounded-[24px] animate-in fade-in zoom-in-95 duration-500 transform group-hover:scale-105 transition-transform"
                 />
 
                 {/* Bottom Glass Overlay Card */}
@@ -407,6 +422,17 @@ export function GlassDashboard({
                       <p className="text-xs text-slate-500 font-light">
                         Sector ID: <span className="font-mono font-medium text-slate-700">SEC-0{selectedSector.id}</span> • Smart Eco-Facility
                       </p>
+                      <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
+                        {selectedSector.name.includes("Industrial")
+                          ? "Heavy Carbon-Capturing Botanical Canopy"
+                          : selectedSector.name.includes("Green") || selectedSector.name.includes("Park")
+                          ? "Indigenous Woodland & Pollinator Sanctuaries"
+                          : selectedSector.name.includes("Medical")
+                          ? "Medicinal Botanicals & Sterile Flora Labs"
+                          : selectedSector.name.includes("Residential")
+                          ? "Organic Urban Produce & Heirloom Varietals"
+                          : "Hydroponic Vertical Flora & Micro-Greens"}
+                      </p>
                     </div>
                     <div className="text-right">
                       <span className="text-2xl font-semibold text-slate-900 tabular-nums">
@@ -416,7 +442,7 @@ export function GlassDashboard({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 pt-1 border-t border-slate-200/50 text-[10px] text-slate-500 font-light">
+                  <div className="grid grid-cols-2 pt-1.5 border-t border-slate-200/50 text-[10px] text-slate-500 font-light">
                     <div>
                       <span className="text-slate-400">Deployment Date:</span> March 15, 2026
                     </div>
