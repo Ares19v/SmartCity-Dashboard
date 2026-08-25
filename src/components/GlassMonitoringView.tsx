@@ -58,7 +58,7 @@ export function GlassMonitoringView({ simulation, onSectorSelect }: GlassMonitor
   return (
     <div className="flex flex-col gap-5 animate-in fade-in duration-300">
       {/* Top Network Pulse Bar */}
-      <div className="bg-white rounded-[28px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+      <div className="glass-panel rounded-[28px] p-5.5 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <Radio className="h-5 w-5 animate-pulse" />
@@ -104,7 +104,7 @@ export function GlassMonitoringView({ simulation, onSectorSelect }: GlassMonitor
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* Left: 12-Sector Status Matrix */}
-        <div className="lg:col-span-8 bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+        <div className="lg:col-span-8 glass-panel rounded-[32px] p-6 flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
             <div>
               <h3 className="text-base font-semibold text-slate-900">Sector IoT Mesh Telemetry Grid</h3>
@@ -134,7 +134,7 @@ export function GlassMonitoringView({ simulation, onSectorSelect }: GlassMonitor
                 <div
                   key={sec.id}
                   onClick={() => onSectorSelect(sec)}
-                  className="bg-[#f8fafc] hover:bg-white hover:shadow-md p-3.5 rounded-2xl border border-slate-200/60 transition-all cursor-pointer flex flex-col justify-between gap-2.5 group"
+                  className="glass-tile hover:bg-white/80 hover:shadow-md p-3.5 rounded-2xl border border-slate-200/60 transition-all cursor-pointer flex flex-col justify-between gap-2.5 group"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -189,32 +189,32 @@ export function GlassMonitoringView({ simulation, onSectorSelect }: GlassMonitor
         <div className="lg:col-span-4 flex flex-col gap-4">
           
           {/* Live Environmental IoT Streams */}
-          <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] flex flex-col gap-3">
+          <div className="glass-panel rounded-[32px] p-6 flex flex-col gap-3">
             <h3 className="text-sm font-semibold text-slate-900">Environmental Sensors</h3>
             
             <div className="grid grid-cols-2 gap-2.5">
-              <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100">
+              <div className="glass-tile p-3 rounded-2xl">
                 <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase font-medium">
                   <Wind className="h-3 w-3 text-teal-500" /> Air Quality (AQI)
                 </div>
                 <p className="text-xl font-bold text-slate-900 mt-1 tabular-nums">28 <span className="text-xs font-normal text-emerald-600">Good</span></p>
               </div>
 
-              <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100">
+              <div className="glass-tile p-3 rounded-2xl">
                 <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase font-medium">
                   <Thermometer className="h-3 w-3 text-amber-500" /> Substation Temp
                 </div>
                 <p className="text-xl font-bold text-slate-900 mt-1 tabular-nums">22.4°C</p>
               </div>
 
-              <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100">
+              <div className="glass-tile p-3 rounded-2xl">
                 <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase font-medium">
                   <Droplets className="h-3 w-3 text-sky-500" /> Water Pressure
                 </div>
                 <p className="text-xl font-bold text-slate-900 mt-1 tabular-nums">64 <span className="text-xs font-normal text-slate-400">PSI</span></p>
               </div>
 
-              <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100">
+              <div className="glass-tile p-3 rounded-2xl">
                 <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase font-medium">
                   <Cpu className="h-3 w-3 text-indigo-500" /> Grid Controllers
                 </div>
@@ -224,7 +224,7 @@ export function GlassMonitoringView({ simulation, onSectorSelect }: GlassMonitor
           </div>
 
           {/* Live Incident Dispatch Feed */}
-          <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] flex-1 flex flex-col gap-3">
+          <div className="glass-panel rounded-[32px] p-6 flex-1 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-slate-900">Incident Dispatch Console</h3>
               <span className="text-[10px] font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">

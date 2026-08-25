@@ -100,9 +100,14 @@ export function GlassDashboard({
   const sectorPowerKw = +(energyLoad * 0.28).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-[#eef1f4] text-[#1e293b] p-3 md:p-6 lg:p-8 font-sans antialiased flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-br from-[#f1f5f9] via-[#e2e8f0] to-[#f8fafc] text-[#1e293b] p-3 md:p-6 lg:p-8 font-sans antialiased flex flex-col justify-center items-center relative overflow-hidden">
+      {/* Ambient Glass Glow Orbs */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-emerald-300/35 to-teal-400/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 -right-32 w-96 h-96 bg-gradient-to-br from-sky-400/30 to-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 left-1/3 w-[500px] h-[500px] bg-gradient-to-br from-indigo-300/25 to-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+
       {/* Outer Glass Frame */}
-      <div className="w-full max-w-[1580px] bg-[#f8fafc]/95 backdrop-blur-2xl rounded-[32px] p-4 md:p-7 border border-white shadow-[0_20px_60px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.02)] flex flex-col gap-5">
+      <div className="glass-container w-full max-w-[1580px] rounded-[36px] p-4 md:p-7 flex flex-col gap-5 relative z-10">
         
         {/* Top Header */}
         <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-1">
@@ -251,7 +256,7 @@ export function GlassDashboard({
             {/* LEFT COLUMN: Conditions, Consumption & Alerts */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             {/* Card 1: Current Conditions */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-4">
+            <div className="glass-panel rounded-[28px] p-5.5 flex flex-col gap-4">
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-sm font-semibold text-slate-900">Current Conditions</h2>
@@ -259,7 +264,7 @@ export function GlassDashboard({
                 </div>
                 <button
                   onClick={() => setActiveModal("conditions")}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-white/50 transition-colors"
                 >
                   <Maximize2 className="h-3.5 w-3.5" />
                 </button>
@@ -267,21 +272,21 @@ export function GlassDashboard({
 
               {/* 2x2 Metric Tiles */}
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
+                <div className="glass-tile p-3 rounded-2xl">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Grid Temp</p>
                   <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">22°C</p>
                 </div>
-                <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
+                <div className="glass-tile p-3 rounded-2xl">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Active Nodes</p>
                   <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">{trafficLights.toLocaleString()}</p>
                 </div>
-                <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
+                <div className="glass-tile p-3 rounded-2xl">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Mesh Sync</p>
                   <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">{stability}%</p>
                 </div>
-                <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
+                <div className="glass-tile p-3 rounded-2xl">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Demand Level</p>
-                  <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">{energyLoad} <span className="text-xs text-slate-400">MW</span></p>
+                  <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">{energyLoad} <span className="text-xs text-slate-400 font-sans">MW</span></p>
                 </div>
               </div>
 
@@ -299,7 +304,7 @@ export function GlassDashboard({
             </div>
 
             {/* Card 2: Consumption */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-3">
+            <div className="glass-panel rounded-[28px] p-5.5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
                   <span>Consumption</span>
@@ -307,7 +312,7 @@ export function GlassDashboard({
                 </div>
                 <button
                   onClick={() => setActiveModal("consumption")}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-white/50 transition-colors"
                 >
                   <Maximize2 className="h-3.5 w-3.5" />
                 </button>
@@ -315,7 +320,7 @@ export function GlassDashboard({
 
               <div>
                 <p className="text-2xl font-light text-slate-900 tabular-nums">
-                  {(energyLoad * 0.12).toFixed(2)} <span className="text-xs font-normal text-slate-400">GW / h</span>
+                  {(energyLoad * 0.12).toFixed(2)} <span className="text-xs font-normal text-slate-400 font-sans">GW / h</span>
                 </p>
                 <div className="flex items-center justify-between text-[11px] text-slate-500 font-light mt-2">
                   <span className="flex items-center gap-1">
@@ -328,7 +333,7 @@ export function GlassDashboard({
               </div>
 
               {/* Progress Split Bar */}
-              <div className="w-full h-4 bg-slate-100 rounded-full flex overflow-hidden p-0.5 gap-1">
+              <div className="w-full h-4 bg-slate-200/50 rounded-full flex overflow-hidden p-0.5 gap-1">
                 <div className="bg-[#22c55e] h-full rounded-full flex items-center justify-center text-[9px] font-semibold text-white transition-all duration-700" style={{ width: "58%" }}>
                   58%
                 </div>
@@ -339,7 +344,7 @@ export function GlassDashboard({
             </div>
 
             {/* Card 3: Alerts Feed */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex-1 flex flex-col gap-3 min-h-[180px]">
+            <div className="glass-panel rounded-[28px] p-5.5 flex-1 flex flex-col gap-3 min-h-[180px]">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold text-slate-900">
                   Active Alerts ({alerts.length})
@@ -378,7 +383,7 @@ export function GlassDashboard({
 
           {/* CENTER COLUMN: 3D Greenhouse / Solar Infrastructure Hero */}
           <div className="lg:col-span-5 flex flex-col">
-            <div className="bg-white rounded-[32px] p-4 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] h-full flex flex-col relative overflow-hidden group">
+            <div className="glass-panel rounded-[32px] p-4.5 h-full flex flex-col relative overflow-hidden group">
               {/* Sector Quick Picker for all 5 sectors */}
               <div className="flex items-center justify-between mb-3 px-2 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
@@ -402,7 +407,7 @@ export function GlassDashboard({
                         className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all duration-200 ${
                           isSelected
                             ? "bg-black text-white shadow-sm scale-105"
-                            : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-black"
+                            : "bg-white/60 text-slate-600 hover:bg-white hover:text-black border border-white/80"
                         }`}
                       >
                         {s.label}
@@ -432,7 +437,7 @@ export function GlassDashboard({
                 />
 
                 {/* Bottom Glass Overlay Card */}
-                <div className="absolute bottom-3 left-3 right-3 bg-white/90 backdrop-blur-xl p-4 rounded-2xl border border-white/70 shadow-lg flex flex-col gap-2">
+                <div className="absolute bottom-3 left-3 right-3 bg-white/80 backdrop-blur-2xl p-4.5 rounded-[22px] border border-white/85 shadow-[0_8px_30px_rgba(0,0,0,0.06)] flex flex-col gap-2">
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-base font-semibold text-slate-900 leading-snug">
@@ -455,7 +460,7 @@ export function GlassDashboard({
                     </div>
                     <div className="text-right">
                       <span className="text-2xl font-semibold text-slate-900 tabular-nums">
-                        {sectorPowerKw} <span className="text-xs font-normal text-slate-500">kW</span>
+                        {sectorPowerKw} <span className="text-xs font-normal text-slate-500 font-sans">kW</span>
                       </span>
                       <p className="text-[10px] text-slate-400 font-light">Live Node Production</p>
                     </div>
@@ -477,7 +482,7 @@ export function GlassDashboard({
           {/* RIGHT COLUMN: Growth Metrics Arc & Site Power Dot Matrix */}
           <div className="lg:col-span-4 flex flex-col gap-4">
             {/* Top Date & Config Bar */}
-            <div className="flex items-center justify-between bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm text-xs text-slate-600">
+            <div className="flex items-center justify-between glass-panel px-4 py-2 rounded-2xl text-xs text-slate-600">
               <div className="flex items-center gap-1.5 font-medium text-slate-800">
                 <Calendar className="h-3.5 w-3.5 text-slate-400" />
                 <span>Today</span>
@@ -492,12 +497,12 @@ export function GlassDashboard({
             </div>
 
             {/* Card 1: Performance Arc Gauges */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-4">
+            <div className="glass-panel rounded-[28px] p-5.5 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-slate-900">Growth & Efficiency</h3>
                 <button
                   onClick={() => setActiveModal("growth")}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-white/50 transition-colors"
                 >
                   <Maximize2 className="h-3.5 w-3.5" />
                 </button>
@@ -521,7 +526,7 @@ export function GlassDashboard({
             </div>
 
             {/* Card 2: Site Power & Vertical Matrix Dot Graph */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex-1 flex flex-col gap-4">
+            <div className="glass-panel rounded-[28px] p-5.5 flex-1 flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-900">
                   <span>Site Power</span>

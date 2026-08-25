@@ -59,7 +59,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
     <div className="flex flex-col gap-5 animate-in fade-in duration-300">
       {/* Top 4 Key Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="glass-panel rounded-[28px] p-5.5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Daily Generation</span>
             <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
@@ -76,7 +76,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="glass-panel rounded-[28px] p-5.5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Clean Energy Ratio</span>
             <span className="p-2 rounded-xl bg-sky-50 text-sky-600">
@@ -93,7 +93,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="glass-panel rounded-[28px] p-5.5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">CO₂ Offset Today</span>
             <span className="p-2 rounded-xl bg-teal-50 text-teal-600">
@@ -110,7 +110,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div className="glass-panel rounded-[28px] p-5.5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Peak Load Forecast</span>
             <span className="p-2 rounded-xl bg-amber-50 text-amber-600">
@@ -132,7 +132,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
         {/* Left: 24h Solar vs Grid Generation Chart */}
-        <div className="lg:col-span-8 bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] flex flex-col gap-4">
+        <div className="lg:col-span-8 glass-panel rounded-[32px] p-6 flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-base font-semibold text-slate-900">24-Hour Energy Generation & Grid Split</h3>
@@ -221,7 +221,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
         </div>
 
         {/* Right: Renewable Resource Distribution */}
-        <div className="lg:col-span-4 bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] flex flex-col justify-between gap-4">
+        <div className="lg:col-span-4 glass-panel rounded-[32px] p-6 flex flex-col justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-slate-900">Energy Matrix Allocation</h3>
             <p className="text-xs text-slate-400 font-light mt-0.5">Clean energy mix across all municipal generation hubs</p>
@@ -278,7 +278,7 @@ export function GlassAnalyticsView({ simulation }: GlassAnalyticsViewProps) {
       </div>
 
       {/* Sector Power Distribution Ranking Table */}
-      <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)]">
+      <div className="glass-panel rounded-[32px] p-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div>
             <h3 className="text-base font-semibold text-slate-900">Sector Consumption & Sustainability Ranking</h3>
