@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import type { SimulationData, SectorStatus } from "@/hooks/useLiveSimulation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { GlassAnalyticsView } from "@/components/GlassAnalyticsView";
+import { GlassMonitoringView } from "@/components/GlassMonitoringView";
 
 interface GlassDashboardProps {
   simulation: SimulationData;
@@ -226,10 +228,27 @@ export function GlassDashboard({
           </div>
         </header>
 
-        {/* Main 3-Column Glass Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch">
-          
-          {/* LEFT COLUMN: Conditions, Consumption & Alerts */}
+        {/* Navigation Tabs on Mobile */}
+        <div className="lg:hidden flex items-center justify-center gap-1 bg-slate-100 p-1 rounded-full text-xs border border-slate-200/50 shadow-inner">
+          {(["overview", "analytics", "monitoring"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-1.5 rounded-full capitalize transition-all text-center ${
+                activeTab === tab
+                  ? "bg-white text-slate-900 font-semibold shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 font-normal"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Dynamic Views: Overview / Analytics / Monitoring */}
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch animate-in fade-in duration-300">
+            {/* LEFT COLUMN: Conditions, Consumption & Alerts */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             {/* Card 1: Current Conditions */}
             <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-4">
@@ -574,8 +593,18 @@ export function GlassDashboard({
             </div>
 
           </div>
+          </div>
+        )}
 
-        </div>
+        {/* Analytics View Suite */}
+        {activeTab === "analytics" && (
+          <GlassAnalyticsView simulation={simulation} />
+        )}
+
+        {/* Monitoring IoT Telemetry View */}
+        {activeTab === "monitoring" && (
+          <GlassMonitoringView simulation={simulation} onSectorSelect={onSectorSelect} />
+        )}
 
       </div>
 
