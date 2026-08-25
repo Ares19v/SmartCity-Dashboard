@@ -85,9 +85,17 @@ export function GlassDashboard({
   const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData } = simulation;
   const [activeTab, setActiveTab] = useState<"overview" | "analytics" | "monitoring">("overview");
   const [powerTab, setPowerTab] = useState<"storage" | "energy">("energy");
-  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [activeModal, setActiveModal] = useState<"conditions" | "consumption" | "alerts" | "growth" | null>(null);
+  const [showBellMenu, setShowBellMenu] = useState(false);
 
   const selectedSector = sectors.find((s) => s.id === focusedSectorId) || sectors[0];
+
+  // Dynamic calculations based on live simulation
+  const stability = Math.min(99.9, +(96 + (trafficLights % 30) * 0.12).toFixed(1));
+  const carbonOffset = Math.round(380 + (energyLoad % 50) * 1.6);
+  const solarGen = +(energyLoad * 0.58).toFixed(1);
+  const gridGen = +(energyLoad * 0.42).toFixed(1);
+  const sectorPowerKw = +(energyLoad * 0.28).toFixed(2);
 
   return (
     <div className="min-h-screen bg-[#eef1f4] text-[#1e293b] p-3 md:p-6 lg:p-8 font-sans antialiased flex flex-col justify-center items-center">
@@ -120,7 +128,7 @@ export function GlassDashboard({
                   mode === "standard" ? "bg-white text-black font-medium shadow-sm" : "text-slate-500"
                 }`}
               >
-                Standard
+                HUD
               </button>
               <button
                 onClick={() => setMode("glass")}
@@ -134,14 +142,14 @@ export function GlassDashboard({
           </div>
 
           {/* Center: Navigation Pills */}
-          <div className="hidden lg:flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs border border-slate-200/50">
+          <div className="hidden lg:flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs border border-slate-200/50 shadow-inner">
             {(["overview", "analytics", "monitoring"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-1.5 rounded-full capitalize transition-all ${
                   activeTab === tab
-                    ? "bg-white text-slate-900 font-medium shadow-sm"
+                    ? "bg-white text-slate-900 font-semibold shadow-sm"
                     : "text-slate-500 hover:text-slate-900 font-normal"
                 }`}
               >
@@ -151,7 +159,7 @@ export function GlassDashboard({
           </div>
 
           {/* Right: Mode Switcher, Bell & Profile */}
-          <div className="flex items-center gap-3 w-full md:w-auto justify-end flex-wrap">
+          <div className="flex items-center gap-3 w-full md:w-auto justify-end flex-wrap relative">
             {/* Mode Switcher Pill */}
             <div className="hidden md:flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs">
               <button
@@ -174,11 +182,33 @@ export function GlassDashboard({
               </button>
             </div>
 
-            {/* Bell Icon */}
-            <div className="h-9 w-9 rounded-full bg-white border border-slate-200/60 shadow-sm flex items-center justify-center relative cursor-pointer hover:bg-slate-50 transition-colors">
-              <Bell className="h-4 w-4 text-slate-600" />
-              {alerts.length > 0 && (
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
+            {/* Bell Icon & Dropdown */}
+            <div className="relative">
+              <div
+                onClick={() => setShowBellMenu(!showBellMenu)}
+                className="h-9 w-9 rounded-full bg-white border border-slate-200/60 shadow-sm flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors"
+              >
+                <Bell className="h-4 w-4 text-slate-600" />
+                {alerts.length > 0 && (
+                  <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                )}
+              </div>
+
+              {showBellMenu && (
+                <div className="absolute right-0 top-11 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-semibold text-slate-900">
+                    <span>Recent Incidents ({alerts.length})</span>
+                    <button onClick={() => setShowBellMenu(false)} className="text-slate-400 hover:text-slate-700">✕</button>
+                  </div>
+                  <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
+                    {alerts.slice(0, 4).map((a) => (
+                      <div key={a.id} className="text-[11px] p-2 rounded-xl bg-slate-50">
+                        <p className="font-medium text-slate-800">{a.message}</p>
+                        <p className="text-[10px] text-slate-400">Sector {a.sector} • {a.severity}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 
@@ -209,8 +239,8 @@ export function GlassDashboard({
                   <p className="text-[11px] text-slate-400 font-light mt-0.5">Last update live seconds ago</p>
                 </div>
                 <button
-                  onClick={() => setShowReportDialog(true)}
-                  className="p-1 rounded-md text-slate-400 hover:text-slate-800 transition-colors"
+                  onClick={() => setActiveModal("conditions")}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
                 >
                   <Maximize2 className="h-3.5 w-3.5" />
                 </button>
@@ -228,7 +258,7 @@ export function GlassDashboard({
                 </div>
                 <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Mesh Sync</p>
-                  <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">98.4%</p>
+                  <p className="text-xl font-light text-slate-900 mt-1 tabular-nums">{stability}%</p>
                 </div>
                 <div className="bg-[#f8fafc] p-3 rounded-2xl border border-slate-100/80">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Demand Level</p>
@@ -242,7 +272,7 @@ export function GlassDashboard({
               </p>
 
               <button
-                onClick={() => setShowReportDialog(true)}
+                onClick={() => setActiveModal("conditions")}
                 className="w-full bg-black text-white text-xs font-medium py-3 rounded-2xl hover:bg-slate-800 transition-colors shadow-sm active:scale-[0.99]"
               >
                 View Detailed Report
@@ -256,7 +286,12 @@ export function GlassDashboard({
                   <span>Consumption</span>
                   <Info className="h-3 w-3 text-slate-400" />
                 </div>
-                <Maximize2 className="h-3.5 w-3.5 text-slate-400" />
+                <button
+                  onClick={() => setActiveModal("consumption")}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                </button>
               </div>
 
               <div>
@@ -265,21 +300,21 @@ export function GlassDashboard({
                 </p>
                 <div className="flex items-center justify-between text-[11px] text-slate-500 font-light mt-2">
                   <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#22c55e]" /> {(energyLoad * 0.55).toFixed(1)} MW Solar
+                    <span className="h-2 w-2 rounded-full bg-[#22c55e]" /> {solarGen} MW Solar
                   </span>
                   <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#86efac]" /> {(energyLoad * 0.45).toFixed(1)} MW Grid
+                    <span className="h-2 w-2 rounded-full bg-[#86efac]" /> {gridGen} MW Grid
                   </span>
                 </div>
               </div>
 
               {/* Progress Split Bar */}
               <div className="w-full h-4 bg-slate-100 rounded-full flex overflow-hidden p-0.5 gap-1">
-                <div className="bg-[#22c55e] h-full rounded-full flex items-center justify-center text-[9px] font-semibold text-white transition-all duration-700" style={{ width: "55%" }}>
-                  55%
+                <div className="bg-[#22c55e] h-full rounded-full flex items-center justify-center text-[9px] font-semibold text-white transition-all duration-700" style={{ width: "58%" }}>
+                  58%
                 </div>
-                <div className="bg-[#bbf7d0] h-full rounded-full flex items-center justify-center text-[9px] font-semibold text-emerald-800 transition-all duration-700" style={{ width: "45%" }}>
-                  45%
+                <div className="bg-[#bbf7d0] h-full rounded-full flex items-center justify-center text-[9px] font-semibold text-emerald-800 transition-all duration-700" style={{ width: "42%" }}>
+                  42%
                 </div>
               </div>
             </div>
@@ -290,19 +325,24 @@ export function GlassDashboard({
                 <h3 className="text-xs font-semibold text-slate-900">
                   Active Alerts ({alerts.length})
                 </h3>
-                <Maximize2 className="h-3.5 w-3.5 text-slate-400" />
+                <button
+                  onClick={() => setActiveModal("alerts")}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                </button>
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-2.5 max-h-[170px] pr-1">
                 {alerts.slice(0, 3).map((a) => (
                   <div key={a.id} className="flex items-start gap-2.5 text-xs">
                     {a.severity === "critical" ? (
-                      <span className="p-1 rounded-full bg-rose-100 text-rose-600 mt-0.5 shrink-0">
-                        <AlertTriangle className="h-3 w-3" />
+                      <span className="p-1.5 rounded-full bg-rose-100 text-rose-600 mt-0.5 shrink-0">
+                        <AlertTriangle className="h-3.5 w-3.5" />
                       </span>
                     ) : (
-                      <span className="p-1 rounded-full bg-amber-100 text-amber-600 mt-0.5 shrink-0">
-                        <AlertTriangle className="h-3 w-3" />
+                      <span className="p-1.5 rounded-full bg-amber-100 text-amber-600 mt-0.5 shrink-0">
+                        <AlertTriangle className="h-3.5 w-3.5" />
                       </span>
                     )}
                     <div className="min-w-0 flex-1">
@@ -327,13 +367,13 @@ export function GlassDashboard({
                   <span className="text-xs font-semibold text-slate-800">{selectedSector.name}</span>
                 </div>
                 <div className="flex items-center gap-1 flex-wrap">
-                  {sectors.slice(0, 4).map((s) => (
+                  {sectors.slice(0, 5).map((s) => (
                     <button
                       key={s.id}
                       onClick={() => onSectorSelect(s)}
-                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                      className={`px-3 py-1 rounded-full text-[10px] font-medium transition-all ${
                         s.id === selectedSector.id
-                          ? "bg-black text-white font-medium shadow-sm"
+                          ? "bg-black text-white shadow-sm"
                           : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       }`}
                     >
@@ -352,7 +392,7 @@ export function GlassDashboard({
                 />
 
                 {/* Bottom Glass Overlay Card */}
-                <div className="absolute bottom-3 left-3 right-3 bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/70 shadow-lg flex flex-col gap-2">
+                <div className="absolute bottom-3 left-3 right-3 bg-white/90 backdrop-blur-xl p-4 rounded-2xl border border-white/70 shadow-lg flex flex-col gap-2">
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-base font-semibold text-slate-900 leading-snug">
@@ -364,7 +404,7 @@ export function GlassDashboard({
                     </div>
                     <div className="text-right">
                       <span className="text-2xl font-semibold text-slate-900 tabular-nums">
-                        {(energyLoad * 0.28).toFixed(2)} <span className="text-xs font-normal text-slate-500">kW</span>
+                        {sectorPowerKw} <span className="text-xs font-normal text-slate-500">kW</span>
                       </span>
                       <p className="text-[10px] text-slate-400 font-light">Live Node Production</p>
                     </div>
@@ -393,7 +433,10 @@ export function GlassDashboard({
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-slate-400 font-mono text-[11px]">08/25/2026</span>
-                <Settings className="h-3.5 w-3.5 text-slate-400 hover:text-slate-800 cursor-pointer transition-colors" />
+                <Settings
+                  onClick={() => setActiveModal("conditions")}
+                  className="h-3.5 w-3.5 text-slate-400 hover:text-slate-800 cursor-pointer transition-colors"
+                />
               </div>
             </div>
 
@@ -401,20 +444,25 @@ export function GlassDashboard({
             <div className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-slate-900">Growth & Efficiency</h3>
-                <Maximize2 className="h-3.5 w-3.5 text-slate-400" />
+                <button
+                  onClick={() => setActiveModal("growth")}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                </button>
               </div>
 
               {/* Two Circular Semi-Arc Gauges */}
               <div className="grid grid-cols-2 gap-4 items-center justify-center py-2">
                 <ArcGauge
                   value={42}
-                  label="CO₂ 420 ppm"
+                  label={`CO₂ ${carbonOffset} ppm`}
                   color="#22c55e"
                   percent={42}
                 />
                 <ArcGauge
                   value={56}
-                  label="Grid Health 6.8"
+                  label={`Grid Health ${(stability / 14).toFixed(1)}`}
                   color="#10b981"
                   percent={56}
                 />
@@ -435,30 +483,30 @@ export function GlassDashboard({
                 <button
                   onClick={() => setPowerTab("storage")}
                   className={`py-1.5 rounded-full transition-all text-center ${
-                    powerTab === "storage" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+                    powerTab === "storage" ? "bg-black text-white shadow-sm" : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
-                  Storage
+                  Storage (84%)
                 </button>
                 <button
                   onClick={() => setPowerTab("energy")}
                   className={`py-1.5 rounded-full transition-all text-center ${
-                    powerTab === "energy" ? "bg-black text-white shadow-sm" : "text-slate-500"
+                    powerTab === "energy" ? "bg-black text-white shadow-sm" : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
-                  Energy
+                  Energy ({energyLoad} MW)
                 </button>
               </div>
 
               {/* Vertical Dot Matrix Chart */}
               <div className="flex items-end justify-between px-2 pt-2 flex-1 min-h-[140px]">
                 {[
-                  { time: "00:00", activeDots: 1 },
-                  { time: "04:00", activeDots: 2 },
-                  { time: "08:00", activeDots: 5 },
-                  { time: "12:00", activeDots: 7, isCurrent: true },
-                  { time: "16:00", activeDots: 4 },
-                  { time: "20:00", activeDots: 6 },
+                  { time: "00:00", activeDots: powerTab === "storage" ? 6 : 1 },
+                  { time: "04:00", activeDots: powerTab === "storage" ? 7 : 2 },
+                  { time: "08:00", activeDots: powerTab === "storage" ? 4 : 5 },
+                  { time: "12:00", activeDots: powerTab === "storage" ? 2 : 7, isCurrent: true },
+                  { time: "16:00", activeDots: powerTab === "storage" ? 5 : 4 },
+                  { time: "20:00", activeDots: powerTab === "storage" ? 8 : 6 },
                 ].map((col, idx) => (
                   <div key={idx} className="flex flex-col items-center gap-1.5 select-none">
                     {/* Vertical Stack of 8 Dots */}
@@ -468,7 +516,9 @@ export function GlassDashboard({
                           key={dotIdx}
                           className={`h-2.5 w-2.5 rounded-full transition-all duration-500 ${
                             dotIdx < col.activeDots
-                              ? "bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.5)]"
+                              ? powerTab === "storage"
+                                ? "bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.5)]"
+                                : "bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.5)]"
                               : "bg-slate-100"
                           }`}
                         />
@@ -487,7 +537,7 @@ export function GlassDashboard({
 
               <p className="text-[10px] text-slate-400 font-light flex items-center gap-1.5 border-t border-slate-100 pt-3">
                 <Info className="h-3 w-3 text-slate-400 shrink-0" />
-                Total energy produced so far is {(energyLoad * 0.58).toFixed(1)} kWh from Solar and {(energyLoad * 0.42).toFixed(1)} kWh from Grid.
+                Total energy produced so far is {solarGen} kWh from Solar and {gridGen} kWh from Grid.
               </p>
             </div>
 
@@ -497,39 +547,93 @@ export function GlassDashboard({
 
       </div>
 
-      {/* Detail Dialog Modal */}
-      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
-        <DialogContent className="bg-white max-w-md rounded-[28px] p-6 shadow-2xl border-none">
+      {/* Modal Dialogs for Detailed Inspection */}
+      <Dialog open={activeModal !== null} onOpenChange={() => setActiveModal(null)}>
+        <DialogContent className="bg-white max-w-lg rounded-[28px] p-6 shadow-2xl border-none">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold text-slate-900 flex items-center justify-between">
-              <span>{selectedSector.name} Full Diagnostics</span>
+              <span>
+                {activeModal === "conditions" && "Live Conditions & Telemetry"}
+                {activeModal === "consumption" && "Energy Consumption Breakdown"}
+                {activeModal === "alerts" && "Incident Dispatch Log"}
+                {activeModal === "growth" && "Ecological & Grid Analytics"}
+              </span>
               <span className="text-xs font-normal text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                Online
+                Nominal
               </span>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 pt-3 text-xs text-slate-600">
-            <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
-              <span>Air Temperature</span>
-              <strong className="text-slate-900 font-semibold">22°C (Optimal)</strong>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
-              <span>Active Traffic Nodes</span>
-              <strong className="text-slate-900 font-semibold">{trafficLights.toLocaleString()} Nodes</strong>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
-              <span>Power Consumption</span>
-              <strong className="text-slate-900 font-semibold">{energyLoad} MW Demand</strong>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
-              <span>Emergency Standby</span>
-              <strong className="text-slate-900 font-semibold">{emergencyUnits} Units Ready</strong>
-            </div>
+            {activeModal === "conditions" && (
+              <>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Selected Sector</span>
+                  <strong className="text-slate-900 font-semibold">{selectedSector.name} (SEC-0{selectedSector.id})</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Active Traffic Controllers</span>
+                  <strong className="text-slate-900 font-semibold">{trafficLights.toLocaleString()} Nodes</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Grid Power Demand</span>
+                  <strong className="text-slate-900 font-semibold">{energyLoad} MW Live</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Mesh Synchronization</span>
+                  <strong className="text-slate-900 font-semibold">{stability}% Uptime</strong>
+                </div>
+              </>
+            )}
+
+            {activeModal === "consumption" && (
+              <>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Total Hourly Draw</span>
+                  <strong className="text-slate-900 font-semibold">{(energyLoad * 0.12).toFixed(2)} GW/h</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Solar Array Contribution</span>
+                  <strong className="text-emerald-600 font-semibold">{solarGen} MW (58%)</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Municipal Grid Power</span>
+                  <strong className="text-sky-600 font-semibold">{gridGen} MW (42%)</strong>
+                </div>
+              </>
+            )}
+
+            {activeModal === "alerts" && (
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {alerts.map((a) => (
+                  <div key={a.id} className="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-slate-800">{a.message}</p>
+                      <p className="text-[10px] text-slate-400">Sector {a.sector} • {a.severity}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-500">Live</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeModal === "growth" && (
+              <>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Carbon Offset Level</span>
+                  <strong className="text-slate-900 font-semibold">CO₂ {carbonOffset} ppm</strong>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl flex justify-between">
+                  <span>Grid Health Index</span>
+                  <strong className="text-slate-900 font-semibold">{(stability / 14).toFixed(2)} / 7.0</strong>
+                </div>
+              </>
+            )}
+
             <button
-              onClick={() => setShowReportDialog(false)}
-              className="w-full mt-2 bg-black text-white text-xs font-medium py-3 rounded-xl hover:bg-slate-800 transition-all"
+              onClick={() => setActiveModal(null)}
+              className="w-full mt-3 bg-black text-white text-xs font-medium py-3 rounded-xl hover:bg-slate-800 transition-all"
             >
-              Close Diagnostics
+              Close Inspector
             </button>
           </div>
         </DialogContent>
