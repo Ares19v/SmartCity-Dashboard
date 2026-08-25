@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   Maximize2,
   AlertTriangle,
@@ -28,6 +28,53 @@ interface GlassDashboardProps {
   setMode: (mode: "standard" | "glass") => void;
 }
 
+function ArcGauge({
+  value,
+  label,
+  color = "#22c55e",
+  percent = 70,
+}: {
+  value: number;
+  label: string;
+  color?: string;
+  percent?: number;
+}) {
+  const arcLength = 125.66;
+  const strokeOffset = arcLength * (1 - Math.min(1, Math.max(0, percent / 100)));
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <div className="relative w-28 h-18 flex items-center justify-center">
+        <svg className="w-full h-full" viewBox="0 0 110 65">
+          {/* Background Track */}
+          <path
+            d="M 15,55 A 40,40 0 0,1 95,55"
+            fill="none"
+            stroke="#f1f5f9"
+            strokeWidth="7"
+            strokeLinecap="round"
+          />
+          {/* Active Fill */}
+          <path
+            d="M 15,55 A 40,40 0 0,1 95,55"
+            fill="none"
+            stroke={color}
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeDasharray={arcLength}
+            strokeDashoffset={strokeOffset}
+            className="transition-all duration-1000 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-0.5">
+          <span className="text-2xl font-bold text-slate-900 tabular-nums tracking-tight">{value}</span>
+        </div>
+      </div>
+      <p className="text-xs text-slate-500 font-light mt-1">{label}</p>
+    </div>
+  );
+}
+
 export function GlassDashboard({
   simulation,
   onSectorSelect,
@@ -43,13 +90,13 @@ export function GlassDashboard({
   const selectedSector = sectors.find((s) => s.id === focusedSectorId) || sectors[0];
 
   return (
-    <div className="min-h-screen bg-[#eef1f4] text-[#1e293b] p-4 md:p-8 font-sans antialiased flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-[#eef1f4] text-[#1e293b] p-3 md:p-6 lg:p-8 font-sans antialiased flex flex-col justify-center items-center">
       {/* Outer Glass Frame */}
-      <div className="w-full max-w-[1580px] bg-[#f8fafc]/90 backdrop-blur-2xl rounded-[32px] p-5 md:p-8 border border-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-6">
+      <div className="w-full max-w-[1580px] bg-[#f8fafc]/95 backdrop-blur-2xl rounded-[32px] p-4 md:p-7 border border-white shadow-[0_20px_60px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.02)] flex flex-col gap-5">
         
         {/* Top Header */}
-        <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-2">
-          {/* Logo Mark */}
+        <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-1">
+          {/* Left: Logo Mark */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
             <div className="flex items-center gap-2.5">
               <div className="h-10 w-10 rounded-2xl bg-black text-white flex items-center justify-center shadow-md shadow-black/10">
@@ -86,10 +133,27 @@ export function GlassDashboard({
             </div>
           </div>
 
-          {/* Center/Right Tabs & Profile */}
+          {/* Center: Navigation Pills */}
+          <div className="hidden lg:flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs border border-slate-200/50">
+            {(["overview", "analytics", "monitoring"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 rounded-full capitalize transition-all ${
+                  activeTab === tab
+                    ? "bg-white text-slate-900 font-medium shadow-sm"
+                    : "text-slate-500 hover:text-slate-900 font-normal"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Right: Mode Switcher, Bell & Profile */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-end flex-wrap">
             {/* Mode Switcher Pill */}
-            <div className="hidden md:flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs mr-2">
+            <div className="hidden md:flex items-center gap-1 bg-slate-200/70 p-1 rounded-full text-xs">
               <button
                 onClick={() => setMode("standard")}
                 className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
@@ -108,23 +172,6 @@ export function GlassDashboard({
                 <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
                 Glass Mode
               </button>
-            </div>
-
-            {/* Navigation Pills */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-xs border border-slate-200/50">
-              {(["overview", "analytics", "monitoring"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-1.5 rounded-full capitalize transition-all ${
-                    activeTab === tab
-                      ? "bg-white text-slate-900 font-medium shadow-sm"
-                      : "text-slate-500 hover:text-slate-900 font-normal"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
             </div>
 
             {/* Bell Icon */}
@@ -150,7 +197,7 @@ export function GlassDashboard({
         </header>
 
         {/* Main 3-Column Glass Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch">
           
           {/* LEFT COLUMN: Conditions, Consumption & Alerts */}
           <div className="lg:col-span-3 flex flex-col gap-4">
@@ -274,12 +321,12 @@ export function GlassDashboard({
           <div className="lg:col-span-5 flex flex-col">
             <div className="bg-white rounded-[32px] p-4 border border-slate-100 shadow-[0_6px_35px_rgba(0,0,0,0.04)] h-full flex flex-col relative overflow-hidden group">
               {/* Sector Quick Picker */}
-              <div className="flex items-center justify-between mb-3 px-2">
+              <div className="flex items-center justify-between mb-3 px-2 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
                   <span className="text-xs font-semibold text-slate-800">{selectedSector.name}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   {sectors.slice(0, 4).map((s) => (
                     <button
                       key={s.id}
@@ -305,7 +352,7 @@ export function GlassDashboard({
                 />
 
                 {/* Bottom Glass Overlay Card */}
-                <div className="absolute bottom-3 left-3 right-3 bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-white/60 shadow-lg flex flex-col gap-2">
+                <div className="absolute bottom-3 left-3 right-3 bg-white/85 backdrop-blur-xl p-4 rounded-2xl border border-white/70 shadow-lg flex flex-col gap-2">
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-base font-semibold text-slate-900 leading-snug">
@@ -359,75 +406,18 @@ export function GlassDashboard({
 
               {/* Two Circular Semi-Arc Gauges */}
               <div className="grid grid-cols-2 gap-4 items-center justify-center py-2">
-                {/* Gauge 1 */}
-                <div className="flex flex-col items-center justify-center text-center">
-                  <div className="relative w-28 h-20 flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 80">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="36"
-                        fill="none"
-                        stroke="#f1f5f9"
-                        strokeWidth="8"
-                        strokeDasharray="140"
-                        strokeDashoffset="28"
-                        strokeLinecap="round"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="36"
-                        fill="none"
-                        stroke="#22c55e"
-                        strokeWidth="8"
-                        strokeDasharray="140"
-                        strokeDashoffset="75"
-                        strokeLinecap="round"
-                        className="transition-all duration-1000"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-                      <span className="text-2xl font-bold text-slate-900 tabular-nums">42</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 font-light mt-1">CO₂ 420 ppm</p>
-                </div>
-
-                {/* Gauge 2 */}
-                <div className="flex flex-col items-center justify-center text-center">
-                  <div className="relative w-28 h-20 flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 80">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="36"
-                        fill="none"
-                        stroke="#f1f5f9"
-                        strokeWidth="8"
-                        strokeDasharray="140"
-                        strokeDashoffset="28"
-                        strokeLinecap="round"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="36"
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="8"
-                        strokeDasharray="140"
-                        strokeDashoffset="60"
-                        strokeLinecap="round"
-                        className="transition-all duration-1000"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-                      <span className="text-2xl font-bold text-slate-900 tabular-nums">56</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 font-light mt-1">Grid Health 6.8</p>
-                </div>
+                <ArcGauge
+                  value={42}
+                  label="CO₂ 420 ppm"
+                  color="#22c55e"
+                  percent={42}
+                />
+                <ArcGauge
+                  value={56}
+                  label="Grid Health 6.8"
+                  color="#10b981"
+                  percent={56}
+                />
               </div>
             </div>
 
@@ -466,11 +456,11 @@ export function GlassDashboard({
                   { time: "00:00", activeDots: 1 },
                   { time: "04:00", activeDots: 2 },
                   { time: "08:00", activeDots: 5 },
-                  { time: "12:00", activeDots: 7 },
+                  { time: "12:00", activeDots: 7, isCurrent: true },
                   { time: "16:00", activeDots: 4 },
                   { time: "20:00", activeDots: 6 },
                 ].map((col, idx) => (
-                  <div key={idx} className="flex flex-col items-center gap-1.5">
+                  <div key={idx} className="flex flex-col items-center gap-1.5 select-none">
                     {/* Vertical Stack of 8 Dots */}
                     <div className="flex flex-col-reverse gap-1.5">
                       {Array.from({ length: 8 }).map((_, dotIdx) => (
@@ -478,13 +468,19 @@ export function GlassDashboard({
                           key={dotIdx}
                           className={`h-2.5 w-2.5 rounded-full transition-all duration-500 ${
                             dotIdx < col.activeDots
-                              ? "bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+                              ? "bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.5)]"
                               : "bg-slate-100"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono mt-1">{col.time}</span>
+                    {col.isCurrent ? (
+                      <span className="text-[9px] font-mono text-slate-900 font-bold bg-slate-100 px-1.5 py-0.5 rounded-md mt-1">
+                        {col.time}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-mono mt-1">{col.time}</span>
+                    )}
                   </div>
                 ))}
               </div>
