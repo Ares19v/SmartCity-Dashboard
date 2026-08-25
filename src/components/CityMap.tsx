@@ -123,31 +123,35 @@ export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; 
 
   return (
     <>
-      <div className="calm-card p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="p-1 rounded hover:bg-muted/60 transition-colors">
-                <SlidersHorizontal className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
+      <div className="calm-card p-4 md:p-5">
+        <div className="flex items-center justify-between gap-2 mb-3.5 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Building className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />
+            <h2 className="text-[11px] font-medium text-muted-foreground tracking-wider uppercase">
+              Municipal Sector Grid
+            </h2>
+          </div>
+
+          {/* Quick Segmented Filter */}
+          <div className="flex items-center gap-1 bg-muted/60 p-0.5 rounded-lg text-[10px]">
+            {(["all", "infrastructure", "service"] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setSectorFilter(opt)}
+                className={`px-2 py-1 rounded-md transition-all font-light ${
+                  sectorFilter === opt
+                    ? "bg-card text-foreground font-medium shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {opt === "all" ? "All (12)" : opt === "infrastructure" ? "Infra (5)" : "Services (7)"}
               </button>
-            </PopoverTrigger>
-            <PopoverContent className="bg-card border-border w-44 p-2" align="start">
-              {(["all", "infrastructure", "service"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => setSectorFilter(opt)}
-                  className={`w-full text-left px-2.5 py-1.5 rounded text-xs font-light transition-colors ${
-                    sectorFilter === opt ? "bg-muted text-foreground font-medium" : "text-muted-foreground hover:bg-muted/50"
-                  }`}
-                >
-                  {opt === "all" ? "All Sectors" : opt === "infrastructure" ? "Infrastructure Status" : "Service Level"}
-                </button>
-              ))}
-            </PopoverContent>
-          </Popover>
-          <h2 className="text-[11px] font-medium text-muted-foreground tracking-wide uppercase">City Sectors</h2>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-4 gap-2.5">
+
+        {/* 4-column Sector Grid */}
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
           {filteredSectors.map((sector) => {
             const Icon = ICON_MAP[sector.icon] || Building;
             const metrics = tooltipData[sector.name] || [];
@@ -156,22 +160,35 @@ export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; 
                 <TooltipTrigger asChild>
                   <div
                     onClick={() => handleSectorClick(sector)}
-                    className="flex flex-col items-center justify-center gap-1 p-2.5 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-lg border border-border/40 bg-muted/20 hover:bg-muted/60 hover:border-border transition-all cursor-pointer group"
                   >
                     <div className="relative">
-                      <Icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" strokeWidth={1.5} />
-                      <div className={`absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full ${STATUS_DOT[sector.status]}`} />
+                      <div className="p-1.5 rounded-md bg-card border border-border/50 group-hover:border-primary/40 transition-all">
+                        <Icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" strokeWidth={1.5} />
+                      </div>
+                      <div className={`absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ${STATUS_DOT[sector.status]} ring-2 ring-card`} />
                     </div>
-                    <span className="text-[9px] text-muted-foreground font-light truncate w-full text-center leading-tight">{sector.name}</span>
+                    <span className="text-[10px] text-muted-foreground group-hover:text-foreground font-light truncate w-full text-center leading-tight transition-colors">
+                      {sector.name}
+                    </span>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="bg-card border-border px-3.5 py-3 max-w-[200px]" side="top">
-                  <p className="font-medium text-xs text-foreground mb-2">{sector.name}</p>
+                <TooltipContent className="bg-card border-border px-3.5 py-3 max-w-[210px] shadow-lg" side="top">
+                  <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-1.5 mb-2">
+                    <p className="font-medium text-xs text-foreground">{sector.name}</p>
+                    <span className={`text-[9px] uppercase font-medium px-1.5 py-0.2 rounded ${
+                      sector.status === "normal" ? "bg-primary/10 text-primary" :
+                      sector.status === "warning" ? "bg-warning/10 text-warning" :
+                      "bg-destructive/10 text-destructive"
+                    }`}>
+                      {sector.status}
+                    </span>
+                  </div>
                   <div className="space-y-1.5">
                     {metrics.map((m) => (
                       <div key={m.label} className="flex justify-between gap-3 text-[11px]">
                         <span className="text-muted-foreground font-light">{m.label}</span>
-                        <span className="text-primary font-medium whitespace-nowrap">{m.value}</span>
+                        <span className="text-foreground font-medium whitespace-nowrap">{m.value}</span>
                       </div>
                     ))}
                   </div>
@@ -182,20 +199,22 @@ export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; 
         </div>
       </div>
 
-      {/* Sector Detail Modal */}
+      {/* Sector Diagnostic Modal */}
       <Dialog open={!!selectedSector} onOpenChange={(open) => !open && setSelectedSector(null)}>
-        <DialogContent className="bg-card border-border max-w-sm">
+        <DialogContent className="bg-card border-border max-w-sm rounded-xl p-5 shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-sm font-medium text-foreground flex items-center gap-2">
-              {selectedSector && (() => {
-                const Icon = ICON_MAP[selectedSector.icon] || Building;
-                return <Icon className="h-4 w-4 text-primary" strokeWidth={1.5} />;
-              })()}
-              {selectedSector?.name}
-              <span className={`ml-auto text-[10px] font-light px-2 py-0.5 rounded-full ${
-                selectedSector?.status === "normal" ? "bg-primary/10 text-primary" :
-                selectedSector?.status === "warning" ? "bg-warning/10 text-warning" :
-                "bg-destructive/10 text-destructive"
+            <DialogTitle className="text-sm font-medium text-foreground flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                {selectedSector && (() => {
+                  const Icon = ICON_MAP[selectedSector.icon] || Building;
+                  return <Icon className="h-4 w-4 text-primary" strokeWidth={1.5} />;
+                })()}
+                <span>{selectedSector?.name}</span>
+              </div>
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                selectedSector?.status === "normal" ? "bg-primary/10 text-primary border-primary/20" :
+                selectedSector?.status === "warning" ? "bg-warning/10 text-warning border-warning/20" :
+                "bg-destructive/10 text-destructive border-destructive/20"
               }`}>
                 {selectedSector && STATUS_LABEL[selectedSector.status]}
               </span>
@@ -203,40 +222,48 @@ export function CityMap({ sectors, onSectorSelect }: { sectors: SectorStatus[]; 
           </DialogHeader>
 
           {health && (
-            <div className={`space-y-0 transition-opacity duration-300 ${resetFlash ? "opacity-50" : "opacity-100"}`}>
-              <h3 className="text-[10px] text-muted-foreground uppercase tracking-wider mb-3">Health Report</h3>
-              <table className="w-full text-xs">
-                <tbody>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2.5 text-muted-foreground font-light">Water Pressure</td>
-                    <td className="py-2.5 text-right text-foreground font-medium">{health.waterPressure}</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2.5 text-muted-foreground font-light">Air Quality Index</td>
-                    <td className="py-2.5 text-right">
-                      <span className="text-foreground font-medium">{health.airQuality.value}</span>
-                      <span className="text-muted-foreground ml-1.5">({health.airQuality.label})</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 text-muted-foreground font-light">Connectivity Status</td>
-                    <td className="py-2.5 text-right">
-                      <span className={`font-medium ${health.connectivity === "Stable" ? "text-primary" : "text-warning"}`}>
-                        {health.connectivity}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className="pt-4">
+            <div className={`space-y-3 pt-2 transition-opacity duration-300 ${resetFlash ? "opacity-40" : "opacity-100"}`}>
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase tracking-wider">
+                <span>Diagnostic Telemetry</span>
+                <span>Node #{selectedSector?.id}</span>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                {/* Water Pressure */}
+                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-between">
+                  <span className="text-muted-foreground font-light">Water Pressure</span>
+                  <span className="text-foreground font-medium tabular-nums">{health.waterPressure}</span>
+                </div>
+
+                {/* Air Quality */}
+                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground font-light">Air Quality Index (AQI)</p>
+                    <p className="text-[10px] text-muted-foreground/70">Category: {health.airQuality.label}</p>
+                  </div>
+                  <span className="text-foreground font-medium tabular-nums text-sm">{health.airQuality.value}</span>
+                </div>
+
+                {/* Connectivity */}
+                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-between">
+                  <span className="text-muted-foreground font-light">Mesh Connectivity</span>
+                  <span className={`font-medium text-xs px-2 py-0.5 rounded ${
+                    health.connectivity === "Stable" ? "bg-primary/10 text-primary" : "bg-warning/10 text-warning"
+                  }`}>
+                    {health.connectivity}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="w-full text-xs font-light h-8 border-border hover:bg-muted/50"
+                  className="w-full text-xs font-light h-9 border-border/80 hover:bg-muted/60 transition-all"
                 >
-                  <RotateCcw className="h-3 w-3 mr-1.5" strokeWidth={1.5} />
-                  Reset Node
+                  <RotateCcw className="h-3 w-3 mr-2 text-primary" strokeWidth={1.5} />
+                  Re-calibrate Sector Telemetry
                 </Button>
               </div>
             </div>

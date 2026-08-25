@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip as LeafletTooltip, useMap } from "react-leaflet";
+import { MapPin, Navigation, RotateCcw } from "lucide-react";
 import type { SectorStatus } from "@/hooks/useLiveSimulation";
 import "leaflet/dist/leaflet.css";
 
@@ -25,11 +26,20 @@ const STATUS_COLOR: Record<string, string> = {
   critical: "hsl(var(--destructive))",
 };
 
-function FlyTo({ target }: { target: [number, number] | null }) {
+function FlyTo({ target, resetCenter }: { target: [number, number] | null; resetCenter: number }) {
   const map = useMap();
   useEffect(() => {
-    if (target) map.flyTo(target, 14, { duration: 1.2 });
+    if (target) {
+      map.flyTo(target, 14, { duration: 1.2 });
+    }
   }, [target, map]);
+
+  useEffect(() => {
+    if (resetCenter > 0) {
+      map.flyTo([47.6062, -122.3321], 12, { duration: 1.0 });
+    }
+  }, [resetCenter, map]);
+
   return null;
 }
 
@@ -40,6 +50,8 @@ interface SectorMapProps {
 }
 
 export function SectorMap({ sectors, selectedId, onSelect }: SectorMapProps) {
+  const [resetTick, setResetTick] = useState(0);
+
   const points = useMemo(
     () =>
       sectors
@@ -48,24 +60,42 @@ export function SectorMap({ sectors, selectedId, onSelect }: SectorMapProps) {
     [sectors]
   );
 
-  const selectedTarget = useMemo(() => {
-    const found = points.find((p) => p.sector.id === selectedId);
-    return found ? found.coords : null;
+  const selectedPoint = useMemo(() => {
+    return points.find((p) => p.sector.id === selectedId) || null;
   }, [points, selectedId]);
 
   const mapRef = useRef(null);
 
   return (
-    <div className="calm-card p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <h2 className="text-[11px] font-medium text-muted-foreground tracking-wide uppercase">
-          Sector Map
-        </h2>
-        <span className="text-[10px] text-muted-foreground/60 font-light ml-auto">
-          Click any marker to focus
-        </span>
+    <div className="calm-card p-4 md:p-5 flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Navigation className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />
+          <h2 className="text-[11px] font-medium text-muted-foreground tracking-wider uppercase">
+            Geospatial Sector Map
+          </h2>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {selectedPoint && (
+            <span className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground font-light tabular-nums bg-muted/60 px-2 py-0.5 rounded">
+              <MapPin className="h-2.5 w-2.5 text-primary" />
+              {selectedPoint.coords[0].toFixed(3)}°N, {Math.abs(selectedPoint.coords[1]).toFixed(3)}°W
+            </span>
+          )}
+          <button
+            onClick={() => setResetTick((t) => t + 1)}
+            title="Reset Map View"
+            className="p-1 rounded hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <RotateCcw className="h-3 w-3" strokeWidth={1.5} />
+          </button>
+        </div>
       </div>
-      <div className="h-[260px] w-full rounded-md overflow-hidden border border-border/60">
+
+      {/* Map Container */}
+      <div className="flex-1 min-h-[260px] w-full rounded-lg overflow-hidden border border-border/60 relative">
         <MapContainer
           center={[47.6062, -122.3321]}
           zoom={12}
@@ -76,28 +106,46 @@ export function SectorMap({ sectors, selectedId, onSelect }: SectorMapProps) {
         >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; OpenStreetMap &copy; CARTO'
+            attribution="&copy; OpenStreetMap &copy; CARTO"
           />
-          <FlyTo target={selectedTarget} />
+          <FlyTo target={selectedPoint ? selectedPoint.coords : null} resetCenter={resetTick} />
           {points.map(({ sector, coords }) => (
             <CircleMarker
               key={sector.id}
               center={coords}
-              radius={selectedId === sector.id ? 9 : 6}
+              radius={selectedId === sector.id ? 10 : 6.5}
               pathOptions={{
                 color: STATUS_COLOR[sector.status],
                 fillColor: STATUS_COLOR[sector.status],
-                fillOpacity: selectedId === sector.id ? 0.85 : 0.55,
-                weight: selectedId === sector.id ? 2 : 1.2,
+                fillOpacity: selectedId === sector.id ? 0.9 : 0.6,
+                weight: selectedId === sector.id ? 2.5 : 1.2,
               }}
               eventHandlers={{ click: () => onSelect(sector) }}
             >
               <LeafletTooltip direction="top" offset={[0, -6]} opacity={1}>
-                <span style={{ fontSize: 11, fontWeight: 500 }}>{sector.name}</span>
+                <div className="text-[11px] font-medium py-0.5">
+                  <span>{sector.name}</span>
+                  <span className="text-[9px] block text-muted-foreground uppercase font-light">
+                    Status: {sector.status}
+                  </span>
+                </div>
               </LeafletTooltip>
             </CircleMarker>
           ))}
         </MapContainer>
+
+        {/* Floating Legend Overlay */}
+        <div className="absolute bottom-2.5 left-2.5 z-[1000] bg-card/90 backdrop-blur-md px-2.5 py-1.5 rounded-md border border-border/60 shadow-sm flex items-center gap-3 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-primary" /> Nominal
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-warning" /> Warning
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-destructive" /> Critical
+          </span>
+        </div>
       </div>
     </div>
   );

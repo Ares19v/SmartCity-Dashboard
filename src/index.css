@@ -63,6 +63,25 @@
 
 @layer utilities {
   .calm-card {
-    @apply bg-card rounded-lg;
+    @apply bg-card/95 rounded-xl border border-border/80 shadow-[0_2px_10px_rgba(0,0,0,0.02),0_10px_30px_rgba(0,0,0,0.03)] backdrop-blur-md transition-all duration-300;
+  }
+  .calm-card:hover {
+    @apply border-border shadow-[0_4px_16px_rgba(0,0,0,0.04),0_12px_36px_rgba(0,0,0,0.04)];
+  }
+
+  /* Custom Slim Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 }
