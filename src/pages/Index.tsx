@@ -84,9 +84,12 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <span className="text-muted-foreground font-light tabular-nums text-xs md:text-sm bg-muted/30 px-2.5 py-1 rounded-lg border border-border/40">
-      {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-    </span>
+    <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/25 text-indigo-900 dark:text-indigo-200 px-3 py-1.5 rounded-lg shadow-sm">
+      <Radio className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+      <span className="font-mono font-medium tabular-nums text-xs md:text-sm">
+        {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+      </span>
+    </div>
   );
 }
 
@@ -107,44 +110,52 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-sky-50/30 p-3 md:p-6 flex flex-col gap-3 md:gap-5 max-w-[1700px] mx-auto">
-      {/* Clean & Cohesive Header */}
-      <header className="calm-card px-4 py-3 md:px-5 md:py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        {/* Left: Brand Identity */}
+      {/* Refined & Colorful Command Header */}
+      <header className="calm-card p-3 md:px-5 md:py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 border border-sky-500/20 bg-gradient-to-r from-card via-card to-sky-500/[0.04] shadow-[0_2px_12px_rgba(14,165,233,0.05)]">
+        {/* Left: Brand Identity with Vibrant Gradient Badge */}
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center shrink-0">
-            <Activity className="h-4 w-4" strokeWidth={1.75} />
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-teal-600 via-emerald-500 to-sky-500 text-white shadow-md shadow-teal-500/25 ring-2 ring-emerald-500/20 flex items-center justify-center shrink-0">
+            <Activity className="h-4.5 w-4.5" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-sm md:text-base font-medium tracking-tight text-foreground flex items-center gap-2">
-              NeoCity <span className="text-muted-foreground font-light">Command Center</span>
-            </h1>
-            <p className="text-[10px] md:text-[11px] text-muted-foreground/80 font-light">
-              Municipal Operations & Autonomous IoT Sensor Grid
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm md:text-base font-semibold tracking-tight text-foreground">
+                NeoCity
+              </h1>
+              <span className="text-[11px] font-medium text-sky-700 dark:text-sky-300 bg-sky-500/10 border border-sky-500/25 px-2 py-0.5 rounded-md">
+                Command Center
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground/85 font-light flex items-center gap-1.5 mt-0.5">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-700 dark:text-emerald-400 font-medium">12/12 Nodes Online</span>
+              <span className="text-muted-foreground/40">•</span>
+              <span>Autonomous IoT Sensor Grid</span>
             </p>
           </div>
         </div>
 
-        {/* Right: Search, Status, and Clock */}
+        {/* Right: Color-Accented Controls, Status, and Clock */}
         <div className="flex items-center gap-2.5 md:gap-3 text-sm flex-wrap w-full sm:w-auto justify-between sm:justify-end">
-          {/* Search Filter */}
+          {/* Search Filter with Sky Blue Accent */}
           <div className="relative flex-1 sm:flex-initial">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" strokeWidth={1.5} />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-sky-600/70 dark:text-sky-400" strokeWidth={1.75} />
             <input
               type="text"
               placeholder="Filter activity log…"
               value={logFilter}
               onChange={(e) => setLogFilter(e.target.value)}
-              className="h-8 w-full sm:w-44 md:w-56 rounded-lg bg-muted/40 border border-border/60 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/50 font-light focus:outline-none focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all"
+              className="h-8.5 w-full sm:w-44 md:w-56 rounded-lg bg-card/90 border border-sky-500/25 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500/60 transition-all shadow-sm"
             />
           </div>
 
-          {/* Operational Status Badge */}
-          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          {/* Operational Status Badge with Rich Emerald Accent */}
+          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 rounded-lg shadow-sm shadow-emerald-500/10">
+            <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
             All Systems Nominal
           </span>
 
-          {/* Clock */}
+          {/* Indigo Time Capsule Clock */}
           <LiveClock />
         </div>
       </header>
