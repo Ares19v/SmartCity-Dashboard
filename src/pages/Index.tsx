@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { TrafficCone, Zap, Shield, Check, Search, Activity, Radio } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { TrafficCone, Zap, Shield, Check, Search, Activity, Radio, Sparkles, Layers } from "lucide-react";
 import { useLiveSimulation, type SectorStatus } from "@/hooks/useLiveSimulation";
 import { CityMap } from "@/components/CityMap";
 import { SectorMap } from "@/components/SectorMap";
 import { PowerChart } from "@/components/PowerChart";
 import { EmergencyFeed } from "@/components/EmergencyFeed";
+import { GlassDashboard } from "@/components/GlassDashboard";
 
 interface StatCardProps {
   icon: React.ElementType;
@@ -94,9 +95,11 @@ function LiveClock() {
 }
 
 export default function Index() {
-  const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData, lastSync } = useLiveSimulation();
+  const simulation = useLiveSimulation();
+  const { trafficLights, energyLoad, emergencyUnits, sectors, alerts, powerData, lastSync } = simulation;
   const [logFilter, setLogFilter] = useState("");
   const [focusedSectorId, setFocusedSectorId] = useState<number | null>(null);
+  const [mode, setMode] = useState<"standard" | "glass">("glass");
 
   const handleSectorSelect = (sector: SectorStatus) => setFocusedSectorId(sector.id);
 
@@ -107,6 +110,18 @@ export default function Index() {
           `sector ${a.sector}`.toLowerCase().includes(logFilter.toLowerCase())
       )
     : alerts;
+
+  if (mode === "glass") {
+    return (
+      <GlassDashboard
+        simulation={simulation}
+        onSectorSelect={handleSectorSelect}
+        focusedSectorId={focusedSectorId}
+        mode={mode}
+        setMode={setMode}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100/50 to-sky-50/30 p-3 md:p-6 flex flex-col gap-3 md:gap-5 max-w-[1700px] mx-auto">
@@ -135,8 +150,30 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Right: Color-Accented Controls, Status, and Clock */}
+        {/* Right: Mode Switcher, Search, Status, and Clock */}
         <div className="flex items-center gap-2.5 md:gap-3 text-sm flex-wrap w-full sm:w-auto justify-between sm:justify-end">
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-lg text-xs">
+            <button
+              onClick={() => setMode("standard")}
+              className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 ${
+                mode === "standard" ? "bg-card text-foreground font-medium shadow-sm" : "text-muted-foreground"
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              HUD
+            </button>
+            <button
+              onClick={() => setMode("glass")}
+              className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 ${
+                mode === "glass" ? "bg-card text-foreground font-medium shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+              Glass Mode
+            </button>
+          </div>
+
           {/* Search Filter with Sky Blue Accent */}
           <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-sky-600/70 dark:text-sky-400" strokeWidth={1.75} />
@@ -145,12 +182,12 @@ export default function Index() {
               placeholder="Filter activity log…"
               value={logFilter}
               onChange={(e) => setLogFilter(e.target.value)}
-              className="h-8.5 w-full sm:w-44 md:w-56 rounded-lg bg-card/90 border border-sky-500/25 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500/60 transition-all shadow-sm"
+              className="h-8.5 w-full sm:w-40 md:w-48 rounded-lg bg-card/90 border border-sky-500/25 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 font-light focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500/60 transition-all shadow-sm"
             />
           </div>
 
           {/* Operational Status Badge with Rich Emerald Accent */}
-          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 rounded-lg shadow-sm shadow-emerald-500/10">
+          <span className="hidden md:flex items-center gap-1.5 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 rounded-lg shadow-sm shadow-emerald-500/10">
             <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" strokeWidth={2.5} />
             All Systems Nominal
           </span>
