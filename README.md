@@ -11,7 +11,6 @@
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-Geospatial-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
   <b>A comprehensive, real-time smart city management platform consolidating traffic flow sensors, renewable energy grids, air quality indices, municipal emergency dispatch, and public transit telemetry into an interactive geospatial command dashboard.</b>
@@ -86,6 +85,6 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## ?? License
+© 2025 Devansh Tyagi (Ares19v). All Rights Reserved.
 
-Distributed under the MIT License. See `LICENSE` for details.
+Unauthorized copying, modification, distribution, or use of this project or any of its components, in whole or in part, without explicit written permission from the author is strictly prohibited.
