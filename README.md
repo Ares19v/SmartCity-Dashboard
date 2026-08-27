@@ -3,6 +3,9 @@
 # ??? SmartCity Dashboard
 ### Real-Time Urban Telemetry, IoT Geospatial Analytics & Infrastructure Operations
 
+[![CI](https://github.com/Ares19v/SmartCity-Dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/Ares19v/SmartCity-Dashboard/actions/workflows/ci.yml)
+
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
