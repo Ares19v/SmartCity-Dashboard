@@ -1,106 +1,88 @@
-# 🏙️ SmartCity Dashboard
+<div align="center">
 
-A real-time urban analytics dashboard that consolidates city-wide metrics into a single, responsive interface. Built with a modern React + TypeScript stack, featuring interactive maps, live charts, and a clean component-driven architecture.
+# ??? SmartCity Dashboard
+### Real-Time Urban Telemetry, IoT Geospatial Analytics & Infrastructure Operations
 
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-Geospatial-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
----
+<p align="center">
+  <b>A comprehensive, real-time smart city management platform consolidating traffic flow sensors, renewable energy grids, air quality indices, municipal emergency dispatch, and public transit telemetry into an interactive geospatial command dashboard.</b>
+</p>
 
-## Features
-
-- **Interactive Maps** — Leaflet-powered geospatial views via `react-leaflet`
-- **Data Visualization** — Charts and graphs powered by `recharts`
-- **Real-time Data Fetching** — Server state management with `@tanstack/react-query`
-- **Multi-page Routing** — Client-side navigation with `react-router-dom`
-- **Dark / Light Mode** — Theme switching via `next-themes`
-- **Accessible UI Components** — Built on the full Radix UI primitive suite
-- **Form Validation** — `react-hook-form` + `zod` schema validation
-- **Fully Typed** — 98% TypeScript coverage
+</div>
 
 ---
 
-## Tech Stack
+## ?? Overview
 
-| Category | Technology |
-|---|---|
-| Framework | React 18 + TypeScript 5 |
-| Build Tool | Vite 5 |
-| Styling | Tailwind CSS + tailwindcss-animate |
-| Components | shadcn/ui (Radix UI primitives) |
-| Charts | Recharts |
-| Maps | Leaflet + react-leaflet |
-| Data Fetching | TanStack Query v5 |
-| Routing | React Router v6 |
-| Forms | React Hook Form + Zod |
-| Theming | next-themes |
-| Package Manager | Bun |
-| Testing | Vitest + Testing Library |
+**SmartCity Dashboard** provides urban planners, city engineers, and municipal emergency response coordinators with a unified situational awareness console. Built on a modular React + TypeScript architecture, the platform pairs real-time geospatial map layers with reactive charts, simulated sensor streams, and automated anomaly alerts.
 
 ---
 
-## Getting Started
+## ? Key Features
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) v18+ **or** [Bun](https://bun.sh/)
-
-### Install & Run
-
-```bash
-# Clone the repo
-git clone https://github.com/Ares19v/SmartCity-Dashboard.git
-cd SmartCity-Dashboard
-
-# Install dependencies
-bun install
-# or: npm install
-
-# Start the dev server
-bun run dev
-# or: npm run dev
-```
-
-App runs at `http://localhost:5173`
-
-### Other Commands
-
-```bash
-bun run build       # Production build
-bun run preview     # Preview production build locally
-bun run test        # Run tests once
-bun run test:watch  # Run tests in watch mode
-bun run lint        # Lint the codebase
-```
+- **Interactive Geospatial Map (Leaflet / OpenStreetMap)**: Live city mapping featuring custom vector markers for traffic congestion points, municipal buses, electric vehicle charging stations, and air quality stations.
+- **Multi-Sector Infrastructure Monitoring**:
+  - ?? **Traffic & Mobility**: Real-time vehicle density, intersection delays, and incident heatmaps.
+  - ? **Energy & Power Grid**: Live solar/wind generation rates, substation loads, and municipal grid efficiency.
+  - ?? **Environmental Telemetry**: PM2.5, PM10, AQI readings, noise level meters, and urban heat island tracking across city sectors (Downtown, Green Zones, Industrial, Residential).
+  - ?? **Emergency & Civic Response**: Active 911 dispatch status, fire department routing, and hospital bed availability.
+- **Sector Visualizers**: High-fidelity architectural sector overviews with dedicated metrics for specialized city zones.
+- **Comprehensive UI Component Suite**: Built on top of Radix UI primitives with smooth transitions, theme switches, and mobile-responsive drawer controls.
 
 ---
 
-## Project Structure
+## ??? Tech Stack & Structure
 
 ```
 SmartCity-Dashboard/
-├── public/             # Static assets
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Route-level views
-│   ├── hooks/          # Custom React hooks
-│   ├── lib/            # Utilities and helpers
-│   └── main.tsx        # App entry point
-├── index.html
-├── vite.config.ts
-├── tailwind.config.ts
-└── package.json
+??? src/
+?   ??? components/         # Metric cards, alert feeds, and control panels
+?   ??? components/map/     # Leaflet map container, custom pins & overlays
+?   ??? components/ui/      # Radix UI glassmorphic component primitives
+?   ??? hooks/              # Sensor stream simulation & polling hooks
+?   ??? types/              # TypeScript schema definitions for urban telemetry
+??? public/                 # High-resolution sector imagery and vector icons
+??? EVAL.md                 # System benchmark, UX audits & performance review
+??? vite.config.ts          # Vite build configuration
+??? package.json            # Dependencies and scripts
 ```
 
+- **Core**: React 18, TypeScript 5.x
+- **Mapping**: Leaflet, React-Leaflet
+- **Data Visualization**: Recharts, TanStack Query
+- **Styling & UI**: TailwindCSS, Radix UI, Lucide Icons, Framer Motion
+
 ---
 
-## Built By
+## ?? Quick Start
 
-[Ares19v](https://github.com/Ares19v)
+### Prerequisites
+- Node.js 18+ or Bun
+
+### Installation & Run
+
+```bash
+# Clone the repository
+git clone https://github.com/Ares19v/SmartCity-Dashboard.git
+cd SmartCity-Dashboard
+
+# Install dependencies (using npm or bun)
+npm install
+
+# Start the Vite development server
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
-<p align="center">
-  Made by Devansh Tyagi @ 2026
-</p>
+
+## ?? License
+
+Distributed under the MIT License. See `LICENSE` for details.
